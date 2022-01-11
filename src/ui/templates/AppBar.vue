@@ -54,7 +54,7 @@ export default {
 #notificacao {
     display: flex;
     flex-direction: column;
-    align-items: end;
+    align-items: flex-end;
 }
 
 #alert-notificacao {
