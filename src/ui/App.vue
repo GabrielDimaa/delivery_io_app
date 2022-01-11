@@ -1,9 +1,10 @@
 <template>
     <v-app>
-        <Drawer></Drawer>
-        <AppBar></AppBar>
+        <AppBar/>
+        <Drawer/>
 
         <v-main id="main">
+            <Content/>
         </v-main>
     </v-app>
 </template>
@@ -11,10 +12,11 @@
 <script>
 import AppBar from "./templates/AppBar";
 import Drawer from "./templates/Drawer";
+import Content from "./templates/Content";
 
 export default {
     name: "App",
-    components: {Drawer, AppBar}
+    components: {Content, Drawer, AppBar}
 }
 </script>
 
@@ -32,7 +34,10 @@ export default {
     --grey-color: #8B909A;
 
     --opacity-primary-color: #DCD5FA;
-    --opacity-grey-color: rgba(185, 183, 190, 0.3);
+    --opacity-grey-color: rgba(185, 183, 190, 0.15);
+
+    --height-appbar: 76px;
+    --padding-content: 30px;
 }
 
 #main {
