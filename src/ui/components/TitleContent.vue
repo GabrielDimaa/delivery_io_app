@@ -5,7 +5,12 @@
 <script>
 export default {
     name: "TitleContent",
-    props: ["title"]
+    props: {
+        title: {
+            type: String,
+            required: true
+        }
+    }
 }
 </script>
 

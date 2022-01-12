@@ -15,7 +15,7 @@
                     <div class="flex-entrega-valor-total">
                         <div class="entrega-info">
                             <div class="previsao-entrega mt-1">
-                                <v-icon size="16" color="#FF3D00">mdi-clock-outline</v-icon>
+                                <v-icon size="16" color="#FF3D00">mdi-timer-outline</v-icon>
                                 <div class="text-info ml-1">Previsão: 21:06</div>
                             </div>
 
@@ -124,22 +124,5 @@ export default {
     width: 16px;
     font-size: 14px;
     alignment: right;
-}
-
-*::-webkit-scrollbar {
-    width: 7px;
-}
-
-*::-webkit-scrollbar-thumb {
-    background-color: rgba(128, 128, 128, 0.15);
-    border-radius: 20px;
-}
-
-*::-webkit-scrollbar-thumb:hover {
-    background-color: rgba(128, 128, 128, 0.4);
-}
-
-*::-webkit-scrollbar-thumb:active {
-    background-color: rgba(128, 128, 128, 0.8);
 }
 </style>

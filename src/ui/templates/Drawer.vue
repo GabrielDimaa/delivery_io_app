@@ -28,7 +28,7 @@ export default {
                 {text: "Cardápio", icon: "mdi-book-open-variant"},
                 {text: "Produtos", icon: "mdi-silverware"},
                 {text: "Categorias", icon: "mdi-shape"},
-                {text: "Taxas de entrega", icon: "mdi-moped-outline"},
+                {text: "Taxas de entrega", icon: "mdi-moped"},
             ],
         }
     },

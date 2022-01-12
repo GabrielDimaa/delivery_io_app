@@ -7,7 +7,7 @@
         <v-spacer/>
 
         <div id="notificacao">
-            <div id="alert-notificacao"></div>
+            <v-badge dot color="var(--error-color)"></v-badge>
             <v-icon :size="iconSize" id="icon-notificacao">mdi-bell</v-icon>
         </div>
 
@@ -55,13 +55,6 @@ export default {
     display: flex;
     flex-direction: column;
     align-items: flex-end;
-}
-
-#alert-notificacao {
-    border-radius:100%;
-    background: var(--error-color);
-    height: 8px;
-    width: 8px;
 }
 
 #icon-notificacao {
