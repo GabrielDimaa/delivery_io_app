@@ -38,7 +38,7 @@
 </template>
 
 <script>
-import TitleContent from "./TitleContent";
+import TitleContent from "../TitleContent";
 export default {
     name: "ListPedidos",
     components: {TitleContent},

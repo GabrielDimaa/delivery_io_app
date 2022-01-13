@@ -26,9 +26,9 @@
             <v-list class="list-itens">
                 <template v-for="item in items">
                     <v-list-item :key="item.produto" style="padding: 0">
-                        <v-list-item-avatar size="50" rounded>
-                            <v-img :src="item.img" width="50"></v-img>
-                        </v-list-item-avatar>
+<!--                        <v-list-item-avatar size="50" rounded>-->
+<!--                            <v-img :src="item.img" width="50"></v-img>-->
+<!--                        </v-list-item-avatar>-->
 
                         <v-list-item-content>
                             <div class="list-item-content">
@@ -58,25 +58,13 @@ export default {
     data: () => ({
         items: [
             {
-                img: require('../../assets/img/hamburguer.png'),
+                img: require('../../../assets/img/hamburguer.png'),
                 produto: "Hambúrguer duplo com queijo cheddar",
                 precoUnitario: "1UN x R$24,00",
                 valorTotal: "R$24,00"
             },
             {
-                img: require('../../assets/img/coca.png'),
-                produto: "Coca cola lata",
-                precoUnitario: "2UN x R$4,50",
-                valorTotal: "R$9,00"
-            },
-            {
-                img: require('../../assets/img/hamburguer.png'),
-                produto: "Hambúrguer duplo com queijo cheddar",
-                precoUnitario: "1UN x R$24,00",
-                valorTotal: "R$24,00"
-            },
-            {
-                img: require('../../assets/img/coca.png'),
+                img: require('../../../assets/img/coca.png'),
                 produto: "Coca cola lata",
                 precoUnitario: "2UN x R$4,50",
                 valorTotal: "R$9,00"

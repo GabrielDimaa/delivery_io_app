@@ -1,15 +1,12 @@
 <template>
     <div class="content">
-        <Pedidos/>
+        <router-view></router-view>
     </div>
 </template>
 
 <script>
-import Pedidos from "../views/admin/Pedidos";
-
 export default {
-    name: "Content",
-    components: {Pedidos}
+    name: "Content"
 }
 </script>
 

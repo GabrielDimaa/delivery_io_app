@@ -9,9 +9,15 @@
                 <p id="menu-title">Menu</p>
             </v-layout>
 
-            <v-layout row v-for="item in itensMenu" :key="item.text" class="item-menu ma-3">
-                <v-icon class="icon-menu mr-4">{{item.icon}}</v-icon>
-                <span class="text-menu">{{item.text}}</span>
+            <v-layout row v-for="item in itensMenu" :key="item.text" class="ma-3">
+                <router-link v-ripple v-if="routerCurrent !== item.route" :to="item.route" class="item-menu">
+                    <v-icon class="icon-menu mr-4">{{item.icon}}</v-icon>
+                    <span class="text-menu">{{item.text}}</span>
+                </router-link>
+                <router-link v-ripple v-else :to="item.route" class="item-menu-selected">
+                    <v-icon class="icon-menu-selected mr-4">{{item.icon}}</v-icon>
+                    <span class="text-menu-selected">{{item.text}}</span>
+                </router-link>
             </v-layout>
         </v-container>
     </v-navigation-drawer>
@@ -23,13 +29,13 @@ export default {
     data() {
         return {
             itensMenu: [
-                {text: "Dashboard", icon: 'mdi-view-dashboard'},
-                {text: "Pedidos", icon: "mdi-room-service"},
-                {text: "Cardápio", icon: "mdi-book-open-variant"},
-                {text: "Produtos", icon: "mdi-silverware"},
-                {text: "Categorias", icon: "mdi-shape"},
-                {text: "Taxas de entrega", icon: "mdi-moped"},
-            ],
+                {text: "Dashboard", icon: "mdi-view-dashboard", route: "/"},
+                {text: "Pedidos", icon: "mdi-room-service", route: "/pedidos"},
+                {text: "Cardápio", icon: "mdi-book-open-variant", route: "/cardapio"},
+                {text: "Produtos", icon: "mdi-silverware", route: "/produtos"},
+                {text: "Categorias", icon: "mdi-shape", route: "/categorias"},
+                {text: "Taxas de entrega", icon: "mdi-moped", route: "/taxas-entrega"},
+            ]
         }
     },
     computed: {
@@ -40,6 +46,9 @@ export default {
             set(value) {
                 this.$store.state.drawer = value
             }
+        },
+        routerCurrent() {
+            return this.$route.path;
         }
     }
 }
@@ -55,18 +64,40 @@ export default {
     color: var(--grey-color);
 }
 
+.icon-menu-selected {
+    color: var(--primary-color);
+}
+
 .text-menu {
     color: var(--grey-color);
     font-size: 16px;
     font-weight: 500;
 }
 
+.text-menu-selected {
+    color: var(--primary-color);
+    font-size: 16px;
+    font-weight: 600;
+}
+
 .item-menu {
     padding: 10px 12px;
+    text-decoration: none;
+    width: 100%;
+    background-position: center;
+    transition: background 0.8s;
 }
 
 .item-menu:hover {
     background: var(--opacity-grey-color);
     border-radius: 6px;
+}
+
+.item-menu-selected {
+    background: var(--opacity-primary-color);
+    border-radius: 6px;
+    padding: 10px 12px;
+    text-decoration: none;
+    width: 100%;
 }
 </style>

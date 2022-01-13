@@ -11,8 +11,8 @@
 </template>
 
 <script>
-import ListPedidos from "../../components/ListPedidos";
-import ResumoPedido from "../../components/ResumoPedido";
+import ListPedidos from "../../components/Pedidos/ListPedidos";
+import ResumoPedido from "../../components/Pedidos/ResumoPedido";
 
 export default {
     name: "Pedidos",
