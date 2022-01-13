@@ -2,7 +2,9 @@
     <v-navigation-drawer color="white" floating v-model="drawer" app>
         <v-container>
             <v-layout row class="pa-4">
-                <v-img src="@/assets/img/logo.png" max-width="180"/>
+                <router-link to="/">
+                    <v-img src="@/assets/img/logo.png" max-width="180"/>
+                </router-link>
             </v-layout>
 
             <v-layout row class="pa-5">
