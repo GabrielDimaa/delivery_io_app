@@ -1,27 +1,27 @@
 <template>
     <v-navigation-drawer color="white" floating v-model="drawer" app>
-        <v-container>
-            <v-layout row class="pa-4">
+            <div class="pa-4">
                 <router-link to="/">
                     <v-img src="@/assets/img/logo.png" max-width="180"/>
                 </router-link>
-            </v-layout>
+            </div>
 
-            <v-layout row class="pa-5">
+            <div class="pa-5">
                 <p id="menu-title">Menu</p>
-            </v-layout>
+            </div>
 
-            <v-layout row v-for="item in itensMenu" :key="item.text" class="ma-3">
-                <router-link v-ripple v-if="routerCurrent !== item.route" :to="item.route" class="item-menu">
+            <div style="display: flex; align-items: center" class="ma-1" v-for="item in itensMenu" :key="item.text">
+                <div :style="[(routerCurrent === item.route) ? {'background': 'var(--primary-color)'} : '']" class="marker"></div>
+
+                <router-link v-ripple v-if="routerCurrent !== item.route" :to="item.route" class="item-menu item-menu-margin">
                     <v-icon class="icon-menu mr-4">{{item.icon}}</v-icon>
                     <span class="text-menu">{{item.text}}</span>
                 </router-link>
-                <router-link v-ripple v-else :to="item.route" class="item-menu-selected">
+                <router-link v-ripple v-else :to="item.route" class="item-menu-selected item-menu-margin">
                     <v-icon class="icon-menu-selected mr-4">{{item.icon}}</v-icon>
                     <span class="text-menu-selected">{{item.text}}</span>
                 </router-link>
-            </v-layout>
-        </v-container>
+            </div>
     </v-navigation-drawer>
 </template>
 
@@ -62,6 +62,12 @@ export default {
     font-weight: 500;
 }
 
+.marker {
+    width: 4px;
+    height: 30px;
+    transition: background 0.6s;
+}
+
 .icon-menu {
     color: var(--grey-color);
 }
@@ -83,7 +89,7 @@ export default {
 }
 
 .item-menu {
-    padding: 10px 12px;
+    padding: 12px;
     text-decoration: none;
     width: 100%;
     background-position: center;
@@ -95,10 +101,14 @@ export default {
     border-radius: 6px;
 }
 
+.item-menu-margin {
+    margin: 4px 12px;
+}
+
 .item-menu-selected {
     background: var(--opacity-primary-color);
     border-radius: 6px;
-    padding: 10px 12px;
+    padding: 12px;
     text-decoration: none;
     width: 100%;
 }
