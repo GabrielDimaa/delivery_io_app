@@ -6,11 +6,11 @@
                 </router-link>
             </div>
 
-            <div class="pa-5">
+            <div class="pt-5 pl-5 pb2">
                 <p id="menu-title">Menu</p>
             </div>
 
-            <div style="display: flex; align-items: center" class="ma-1" v-for="item in itensMenu" :key="item.text">
+            <div style="display: flex; align-items: center" class="ml-1 mr-1" v-for="item in itensMenu" :key="item.text">
                 <div :style="[(routerCurrent === item.route) ? {'background': 'var(--primary-color)'} : '']" class="marker"></div>
 
                 <router-link v-ripple v-if="routerCurrent !== item.route" :to="item.route" class="item-menu item-menu-margin">

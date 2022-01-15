@@ -33,7 +33,7 @@ export default new Router({
         },
         {
             path: "/taxas-entrega",
-            name: "TaxasEntrega",
+            name: "Taxas de entrega",
             component: TaxasEntrega
         }
     ]

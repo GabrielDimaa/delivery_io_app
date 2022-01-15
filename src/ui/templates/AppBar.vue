@@ -4,6 +4,8 @@
             <v-icon color="var(--primary-color)" :size="iconSize">mdi-menu</v-icon>
         </v-btn>
 
+        <h1 class="ml-6">{{$route.name}}</h1>
+
         <v-spacer/>
 
         <div id="notificacao">
@@ -38,6 +40,10 @@ export default {
 </script>
 
 <style scoped>
+h1 {
+    font-size: 20px;
+}
+
 .sair {
     display: flex;
     align-items: center;

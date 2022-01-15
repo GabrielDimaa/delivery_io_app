@@ -24,6 +24,8 @@ export default {
 </script>
 
 <style scoped>
+@import '../../../assets/css/webkit.css';
+
 .pedidos,
 .pedidos .flex-lista-pedidos,
 .pedidos .flex-pedido {

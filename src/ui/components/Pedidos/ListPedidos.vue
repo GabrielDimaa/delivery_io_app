@@ -1,7 +1,5 @@
 <template>
     <div class="container-pedidos">
-        <TitleContent title="Pedidos"/>
-
         <div class="lista-pedidos">
             <div v-for="teste in testes" :key="teste">
                 <v-card height="126" class="card-pedido-resumido mt-2" elevation="2">
@@ -38,10 +36,8 @@
 </template>
 
 <script>
-import TitleContent from "../TitleContent";
 export default {
     name: "ListPedidos",
-    components: {TitleContent},
     data: () => ({
         testes: Array(10),
     })
