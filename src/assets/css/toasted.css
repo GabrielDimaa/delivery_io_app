@@ -1,0 +1,20 @@
+.toasted {
+    font-family: 'Heebo', sans-serif !important;
+    padding: 16px !important;
+    border-radius: 6px !important;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.4) !important;
+}
+
+.toasted-success {
+    font-weight: 500 !important;
+    background: var(--primary-color) !important;
+}
+
+.toasted-error {
+    font-weight: 500 !important;
+    background: var(--error-color) !important;
+}
+
+.toasted > i {
+    font-size: 22px;
+}

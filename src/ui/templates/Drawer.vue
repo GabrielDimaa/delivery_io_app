@@ -78,13 +78,13 @@ export default {
 
 .text-menu {
     color: var(--grey-color);
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 500;
 }
 
 .text-menu-selected {
     color: var(--primary-color);
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 600;
 }
 
