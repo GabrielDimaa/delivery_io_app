@@ -1,6 +1,8 @@
 import axios from 'axios';
 import Vue from 'vue';
 
+const errorValidate = "Existem campos que não são válidos!";
+
 const api = axios.create({
     baseURL: "http://localhost:8000/api/"
 });
@@ -10,8 +12,6 @@ function showSuccess(msg) {
 }
 
 function showError(error) {
-    console.log("rgs");
-
     if (typeof error == "string") {
         Vue.toasted.global.showError(error);
     } else if (error.response && error.response.data && error.response.data.error) {
@@ -21,4 +21,4 @@ function showError(error) {
     }
 }
 
-export {api, showSuccess, showError};
+export {errorValidate, api, showSuccess, showError};

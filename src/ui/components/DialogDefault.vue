@@ -5,7 +5,7 @@
         </template>
         <v-card>
             <v-card-title class="text-h6 primary white--text font-weight-regular" dark>
-                {{ title }}
+                {{title}}
             </v-card-title>
 
             <v-progress-linear v-show="loading" color="var(--opacity-primary-color)"
@@ -19,7 +19,7 @@
                 <v-btn class="mr-3" color="primary" :disabled="loading" text @click="setDialog(false)">
                     Cancelar
                 </v-btn>
-                <v-btn color="primary" :loading="loading" @click="clickConfirm">
+                <v-btn color="primary" :disabled="loading" :loading="loading" @click="clickConfirm">
                     {{textBtnConfirm}}
                 </v-btn>
             </v-card-actions>
