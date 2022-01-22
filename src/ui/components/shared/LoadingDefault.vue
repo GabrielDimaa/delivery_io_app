@@ -1,5 +1,5 @@
 <template>
-    <v-dialog v-model="loading" persistent width="200" transition="dialog-bottom-transition">
+    <v-dialog v-model="loading" persistent max-width="400" transition="dialog-bottom-transition">
         <v-card height="200" class="container-loading pt-4">
             <v-progress-circular size="66" color="var(--primary-color)" indeterminate
                                  background-color="var(--opacity-primary-color)">

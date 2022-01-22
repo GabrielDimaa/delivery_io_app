@@ -5,7 +5,7 @@
                            :loading="loadingForm" :click-confirm="save">
                 <template v-slot:activator="{on, attrs}">
                     <v-btn class="btn" color="var(--primary-color)" @click="resetFields"  v-on="on" :attrs="attrs">
-                        Cadastrar categoria
+                        Adicionar categoria
                     </v-btn>
                 </template>
 
@@ -38,13 +38,13 @@
                                         {{sub.descricao}}
                                         <v-tooltip top left>
                                             <template v-slot:activator="{ on, attrs }">
-                                                <v-btn elevation="0" color="transparent" fab small :bind="attrs" v-on="on">
+                                                <v-btn @click="deleteSubcategoria(sub)" elevation="0" color="transparent" fab small :bind="attrs" v-on="on">
                                                     <v-icon color="var(--error-color)" size="22">
                                                         mdi-minus-circle-outline
                                                     </v-icon>
                                                 </v-btn>
                                             </template>
-                                            Remover
+                                            Excluir
                                         </v-tooltip>
                                     </div>
                                 </a>
@@ -56,27 +56,30 @@
             <div style="height: 12px;"/>
         </div>
 
-        <LoadingDefault :loading="loading" :message="'Buscando categorias...'"></LoadingDefault>
+        <LoadingDefault :loading="loading" :message="textLoading"></LoadingDefault>
         <ListagemCategorias v-if="!hideDataTable" :onClickUpdate="(e) => onClickUpdate(e)" :onClickDelete="(e) => onClickDelete(e)" :data-table="categorias"/>
+        <ConfirmDialog  ref="confirmDialog"></ConfirmDialog>
     </v-container>
 </template>
 
 <script>
 import ListagemCategorias from '../../components/Categorias/ListagemCategorias';
-import DialogDefault from "../../components/DialogDefault";
-import LoadingDefault from "../../components/LoadingDefault";
+import DialogDefault from "../../components/shared/DialogDefault";
+import LoadingDefault from "../../components/shared/LoadingDefault";
+import ConfirmDialog from "../../components/shared/ConfirmDialog";
 import {ValidationObserver, ValidationProvider} from 'vee-validate';
 import '@/plugins/vee';
 import {api, showSuccess, showError} from '../../../global';
 
 export default {
     name: "Categorias",
-    components: {LoadingDefault, DialogDefault, ListagemCategorias, ValidationProvider, ValidationObserver},
+    components: {ConfirmDialog, LoadingDefault, DialogDefault, ListagemCategorias, ValidationProvider, ValidationObserver},
     data: () => ({
         categoria: {},
         categorias: [],
         dialog: false,
         loading: false,
+        textLoading: "",
         loadingForm: false
     }),
     computed: {
@@ -85,7 +88,13 @@ export default {
         }
     },
     methods: {
-        setLoading(value) {
+        setLoading(value, msg) {
+            if (!value) {
+                this.textLoading = "";
+            } else {
+                this.textLoading = msg;
+            }
+
             this.loading = value;
         },
         setLoadingForm(value) {
@@ -118,9 +127,7 @@ export default {
                     if (this.categoria.id_categoria) {
                         const categoriaFilter = this.categorias.filter(e => e.id_categoria === categoriaResponse.id_categoria);
 
-                        console.log(categoriaFilter);
                         categoriaFilter.add(categoriaResponse);
-                        console.log(categoriaFilter);
                         this.categorias = categoriaFilter;
                     } else {
                         this.categorias.unshift(categoriaResponse)
@@ -131,19 +138,44 @@ export default {
                     this.resetFields();
                     showSuccess();
                 }
-            } catch (e) {
-                showError(e);
+            } catch (err) {
+                showError(err);
             } finally {
                 this.setLoadingForm(false);
             }
         },
+        async remove() {
+            try {
+                this.setLoading(true, "Excluindo categoria...");
+
+                const response = await api.delete(`categorias/${this.categoria.id_categoria}`);
+
+                if (!response.data.success) {
+                    showError("Houve um erro ao remover a categoria!");
+                }
+
+                this.resetFields();
+                showSuccess();
+            }  catch (err) {
+                showError(err);
+            } finally {
+                this.setLoading(false);
+            }
+        },
         onClickUpdate(categoria) {
-            console.log(categoria);
-            this.categoria = categoria;
+            this.categoria = {...categoria};
             this.$refs.dialog.setDialog(true);
         },
-        onClickDelete(categoria) {
-            console.log(categoria);
+        async onClickDelete(categoria) {
+            const confirm = await this.$refs.confirmDialog.showDialog("Excluir", "Deseja excluir a categoria?");
+
+            if (confirm) {
+                this.categoria = categoria;
+                await this.remove();
+            }
+        },
+        deleteSubcategoria(subcategoria) {
+            this.categoria.subcategorias = this.categoria.subcategorias.filter(e => e.id_subcategoria !== subcategoria.id_subcategoria);
         },
         sort(a, b) {
             return (a.descricao > b.descricao) ? 1 : ((b.descricao > a.descricao) ? -1 : 0);
@@ -151,7 +183,7 @@ export default {
     },
     async created() {
         try {
-            this.setLoading(true);
+            this.setLoading(true, "Buscando categorias...");
 
             const response = await api.get("categorias");
 

@@ -22,7 +22,7 @@ Vue.toasted.register(
     msg => msg !== null ? msg : "Ops... Erro inesperado.",
     {
         type: "error",
-        icon: "mdi-alert-circle",
+        icon: "mdi-alert-circle-outline",
         closeOnSwipe: false,
         className: "toasted-error"
     }

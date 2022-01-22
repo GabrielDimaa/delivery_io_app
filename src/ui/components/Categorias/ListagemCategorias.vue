@@ -1,6 +1,6 @@
 <template>
     <div id="table-categorias">
-        <v-data-table :headers="headersCategoria" :items="dataTable" item-key="id_categoria" class="elevation-2"
+        <v-data-table :headers="headersCategoria" hide-default-header :items="dataTable" item-key="id_categoria" class="elevation-2"
                       :footer-props="footerProps" :items-per-page="5" no-data-text="">
             <template v-slot:item="props">
                 <div class="flex item-categoria">
@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import ButtonActionTable from "../ButtonActionTable";
+import ButtonActionTable from "../shared/ButtonActionTable";
 
 export default {
     name: "ListagemCategorias",
