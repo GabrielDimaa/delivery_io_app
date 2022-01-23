@@ -18,8 +18,8 @@
                                         <v-flex>
                                             <validation-provider v-slot="{errors}" name="Descrição" rules="required">
                                                 <v-text-field
-                                                    v-model="categoria.descricao" :error-messages="errors"
-                                                    label="Descrição" required outlined>
+                                                    v-model="categoria.descricao" :disabled="loadingForm"
+                                                    :error-messages="errors" label="Descrição" autofocus required outlined>
                                                 </v-text-field>
                                             </validation-provider>
                                         </v-flex>
@@ -28,13 +28,14 @@
                             </validation-observer>
 
                             <div class="subcategorias">
-                                <v-btn :loading="loadingForm" :disabled="loadingForm" text class="btn-add-subcategoria">
+                                <v-btn :disabled="loadingForm" @click.stop="setDialogSubcategoria(true)"
+                                       text class="btn-add-subcategoria">
                                     <v-icon color="var(--secondary-color)" size="22" left>mdi-plus-circle</v-icon>
                                     Adicionar subcategoria
                                 </v-btn>
 
-                                <a href="#" v-ripple @click.prevent class="subcategoria">
-                                    <div class="subcategoria-dialog" v-for="sub in categoria.subcategorias" :key="sub.id_subcategoria">
+                                <a href="#" v-ripple @click.prevent="dialogSubcategoria" class="subcategoria">
+                                    <div class="subcategoria-dialog" v-for="sub in subcategorias" :key="sub.id_subcategoria">
                                         {{sub.descricao}}
                                         <v-tooltip top left>
                                             <template v-slot:activator="{ on, attrs }">
@@ -56,9 +57,45 @@
             <div style="height: 12px;"/>
         </div>
 
-        <LoadingDefault :loading="loading" :message="textLoading"></LoadingDefault>
         <ListagemCategorias v-if="!hideDataTable" :onClickUpdate="(e) => onClickUpdate(e)" :onClickDelete="(e) => onClickDelete(e)" :data-table="categorias"/>
+        <span v-else>Nenhuma categoria cadastrada.</span>
+
+        <LoadingDefault :loading="loading" :message="textLoading"></LoadingDefault>
         <ConfirmDialog  ref="confirmDialog"></ConfirmDialog>
+        <v-dialog v-model="dialogSubcategoria" persistent max-width="290">
+            <v-card>
+                <v-card-title class="text-h7">Subcategoria</v-card-title>
+
+                <v-card-text class="mt-2">
+                    <v-container class="pa-0 ma-0">
+                        <validation-observer ref="formCategorias">
+                            <v-form @submit.prevent="adicionarSubcategoria">
+                                <v-layout>
+                                    <v-flex>
+                                        <validation-provider v-slot="{errors}" name="Descrição" rules="required">
+                                            <v-text-field
+                                                v-model="subcategoria.descricao" :disabled="loadingForm"
+                                                :error-messages="errors" label="Descrição" autofocus required outlined>
+                                            </v-text-field>
+                                        </validation-provider>
+                                    </v-flex>
+                                </v-layout>
+                            </v-form>
+                        </validation-observer>
+                    </v-container>
+                </v-card-text>
+
+                <v-card-actions>
+                    <v-spacer/>
+                    <v-btn class="mr-3" color="primary" :disabled="loading" text @click="setDialogSubcategoria(false)">
+                        Cancelar
+                    </v-btn>
+                    <v-btn color="primary" :disabled="loading" :loading="loading" @click="adicionarSubcategoria">
+                        Confirmar
+                    </v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
     </v-container>
 </template>
 
@@ -76,8 +113,11 @@ export default {
     components: {ConfirmDialog, LoadingDefault, DialogDefault, ListagemCategorias, ValidationProvider, ValidationObserver},
     data: () => ({
         categoria: {},
+        subcategoria: {},
         categorias: [],
+        subcategorias: [],
         dialog: false,
+        dialogSubcategoria: false,
         loading: false,
         textLoading: "",
         loadingForm: false
@@ -103,6 +143,10 @@ export default {
         resetFields() {
             if (this.$refs.formCategorias) this.$refs.formCategorias.reset();
             this.categoria = {};
+            this.subcategoria = {};
+        },
+        setDialogSubcategoria(value) {
+            this.dialogSubcategoria = value;
         },
         async save() {
             try {
@@ -162,6 +206,14 @@ export default {
                 this.setLoading(false);
             }
         },
+        adicionarSubcategoria() {
+            this.subcategorias.push({
+                "id_subcategoria": null,
+                "id_categoria": null,
+                "descricao": this.subcategoria.descricao,
+                "deleted": false
+            });
+        },
         onClickUpdate(categoria) {
             this.categoria = {...categoria};
             this.$refs.dialog.setDialog(true);
@@ -175,7 +227,7 @@ export default {
             }
         },
         deleteSubcategoria(subcategoria) {
-            this.categoria.subcategorias = this.categoria.subcategorias.filter(e => e.id_subcategoria !== subcategoria.id_subcategoria);
+            subcategoria.deleted = true;
         },
         sort(a, b) {
             return (a.descricao > b.descricao) ? 1 : ((b.descricao > a.descricao) ? -1 : 0);
