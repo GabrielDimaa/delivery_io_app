@@ -27,19 +27,22 @@
                                 </v-form>
                             </validation-observer>
 
-                            <div class="subcategorias">
-                                <v-btn :disabled="loadingForm" @click.stop="setDialogSubcategoria(true)"
+                            <div class="flex container-subcategorias">
+                                <v-btn :disabled="loadingForm" @click.stop="openDialogSubcategoria(null)"
                                        text class="btn-add-subcategoria">
                                     <v-icon color="var(--secondary-color)" size="22" left>mdi-plus-circle</v-icon>
                                     Adicionar subcategoria
                                 </v-btn>
 
-                                <a href="#" v-ripple @click.prevent="dialogSubcategoria" class="subcategoria">
-                                    <div class="subcategoria-dialog" v-for="sub in subcategorias" :key="sub.id_subcategoria">
-                                        {{sub.descricao}}
+                                <div v-for="sub in subcategorias" :key="sub.id_subcategoria" class="subcategorias">
+                                    <div v-if="!sub.deleted" class="subcategoria-dialog">
+                                        <a @click.prevent="openDialogSubcategoria(sub)" href="#" v-ripple class="subcategoria">
+                                            {{sub.descricao}}
+                                        </a>
                                         <v-tooltip top left>
                                             <template v-slot:activator="{ on, attrs }">
-                                                <v-btn @click="deleteSubcategoria(sub)" elevation="0" color="transparent" fab small :bind="attrs" v-on="on">
+                                                <v-btn @click="deleteSubcategoria(sub)" elevation="0" class="subcategoria-btn"
+                                                       color="transparent" fab small :bind="attrs" v-on="on">
                                                     <v-icon color="var(--error-color)" size="22">
                                                         mdi-minus-circle-outline
                                                     </v-icon>
@@ -48,7 +51,7 @@
                                             Excluir
                                         </v-tooltip>
                                     </div>
-                                </a>
+                                </div>
                             </div>
                         </v-container>
                     </v-card-text>
@@ -57,70 +60,46 @@
             <div style="height: 12px;"/>
         </div>
 
-        <ListagemCategorias v-if="!hideDataTable" :onClickUpdate="(e) => onClickUpdate(e)" :onClickDelete="(e) => onClickDelete(e)" :data-table="categorias"/>
+        <ListagemCategorias v-if="!hideDataTable" :onClickUpdate="(e) => clickUpdateCategoria(e)" :onClickDelete="(e) => clickDeleteCategoria(e)" :data-table="categorias"/>
         <span v-else>Nenhuma categoria cadastrada.</span>
 
-        <LoadingDefault :loading="loading" :message="textLoading"></LoadingDefault>
-        <ConfirmDialog  ref="confirmDialog"></ConfirmDialog>
-        <v-dialog v-model="dialogSubcategoria" persistent max-width="290">
-            <v-card>
-                <v-card-title class="text-h7">Subcategoria</v-card-title>
-
-                <v-card-text class="mt-2">
-                    <v-container class="pa-0 ma-0">
-                        <validation-observer ref="formCategorias">
-                            <v-form @submit.prevent="adicionarSubcategoria">
-                                <v-layout>
-                                    <v-flex>
-                                        <validation-provider v-slot="{errors}" name="Descrição" rules="required">
-                                            <v-text-field
-                                                v-model="subcategoria.descricao" :disabled="loadingForm"
-                                                :error-messages="errors" label="Descrição" autofocus required outlined>
-                                            </v-text-field>
-                                        </validation-provider>
-                                    </v-flex>
-                                </v-layout>
-                            </v-form>
-                        </validation-observer>
-                    </v-container>
-                </v-card-text>
-
-                <v-card-actions>
-                    <v-spacer/>
-                    <v-btn class="mr-3" color="primary" :disabled="loading" text @click="setDialogSubcategoria(false)">
-                        Cancelar
-                    </v-btn>
-                    <v-btn color="primary" :disabled="loading" :loading="loading" @click="adicionarSubcategoria">
-                        Confirmar
-                    </v-btn>
-                </v-card-actions>
-            </v-card>
-        </v-dialog>
+        <LoadingDefault :loading="loading" :message="textLoading"/>
+        <ConfirmDialog ref="confirmDialog"/>
+        <SubcategoriaDialog :loading="loadingForm" :subcategoria="subcategoria" ref="subcategoriaDialog"
+                            :click-confirm="clickConfirmSubcategoria" :click-cancel="clickCancelSubcategoria"/>
     </v-container>
 </template>
 
 <script>
+import '@/plugins/vee';
+import {api, showSuccess, showError} from '../../../global';
+import {ValidationObserver, ValidationProvider} from 'vee-validate';
 import ListagemCategorias from '../../components/Categorias/ListagemCategorias';
 import DialogDefault from "../../components/shared/DialogDefault";
 import LoadingDefault from "../../components/shared/LoadingDefault";
 import ConfirmDialog from "../../components/shared/ConfirmDialog";
-import {ValidationObserver, ValidationProvider} from 'vee-validate';
-import '@/plugins/vee';
-import {api, showSuccess, showError} from '../../../global';
+import SubcategoriaDialog from "../../components/Categorias/SubcategoriaDialog";
 
 export default {
     name: "Categorias",
-    components: {ConfirmDialog, LoadingDefault, DialogDefault, ListagemCategorias, ValidationProvider, ValidationObserver},
+    components: {
+        SubcategoriaDialog,
+        ConfirmDialog,
+        LoadingDefault,
+        DialogDefault,
+        ListagemCategorias,
+        ValidationProvider,
+        ValidationObserver,
+    },
     data: () => ({
         categoria: {},
-        subcategoria: {},
+        subcategoria: {"descricao":  ""},
+        subcategoriaSelected: {},
         categorias: [],
         subcategorias: [],
-        dialog: false,
-        dialogSubcategoria: false,
         loading: false,
         textLoading: "",
-        loadingForm: false
+        loadingForm: false,
     }),
     computed: {
         hideDataTable() {
@@ -143,10 +122,22 @@ export default {
         resetFields() {
             if (this.$refs.formCategorias) this.$refs.formCategorias.reset();
             this.categoria = {};
-            this.subcategoria = {};
+            this.subcategorias = [];
         },
-        setDialogSubcategoria(value) {
-            this.dialogSubcategoria = value;
+        resetSubcategoria() {
+            this.subcategoria = {"descricao":  ""};
+            this.subcategoriaSelected = {};
+        },
+        adicionarSubcategoriaNaLista(subcategoria) {
+            this.subcategorias.push({
+                "id_subcategoria": null,
+                "id_categoria": null,
+                "descricao": subcategoria.descricao,
+                "deleted": false,
+            });
+        },
+        sort(a, b) {
+            return (a.descricao > b.descricao) ? 1 : ((b.descricao > a.descricao) ? -1 : 0);
         },
         async save() {
             try {
@@ -158,7 +149,11 @@ export default {
                     const postPut = this.categoria.id_categoria ? 'put' : 'post';
                     const id = this.categoria.id_categoria ? `/${this.categoria.id_categoria}` : "";
 
-                    const data = {"descricao": this.categoria.descricao};
+                    const data = {
+                        "id_categoria": this.categoria.id_categoria,
+                        "descricao": this.categoria.descricao,
+                        "subcategorias": this.subcategorias
+                    };
 
                     const response = await api[postPut](`categorias${id}`, data);
 
@@ -206,19 +201,13 @@ export default {
                 this.setLoading(false);
             }
         },
-        adicionarSubcategoria() {
-            this.subcategorias.push({
-                "id_subcategoria": null,
-                "id_categoria": null,
-                "descricao": this.subcategoria.descricao,
-                "deleted": false
-            });
-        },
-        onClickUpdate(categoria) {
+        clickUpdateCategoria(categoria) {
+            console.log(categoria);
             this.categoria = {...categoria};
+            this.subcategorias = [...categoria.subcategorias];
             this.$refs.dialog.setDialog(true);
         },
-        async onClickDelete(categoria) {
+        async clickDeleteCategoria(categoria) {
             const confirm = await this.$refs.confirmDialog.showDialog("Excluir", "Deseja excluir a categoria?");
 
             if (confirm) {
@@ -226,12 +215,41 @@ export default {
                 await this.remove();
             }
         },
+        openDialogSubcategoria(subcategoria) {
+            if (subcategoria !== null) {
+                this.subcategoria = {...subcategoria};
+                this.subcategoriaSelected = subcategoria;
+            }
+            this.$refs.subcategoriaDialog.setDialog(true);
+        },
+        async clickConfirmSubcategoria(subcategoria) {
+            try {
+                this.setLoadingForm(true);
+
+                const validate = await this.$refs.subcategoriaDialog.$refs.formSubcategorias.validate();
+
+                if (validate) {
+                    if (subcategoria.id_subcategoria !== undefined) {
+                        this.subcategoriaSelected.descricao = subcategoria.descricao;
+                    } else {
+                        this.adicionarSubcategoriaNaLista(subcategoria);
+                    }
+
+                    this.$refs.subcategoriaDialog.setDialog(false);
+                    this.resetSubcategoria();
+                }
+            } finally {
+                this.setLoadingForm(false);
+            }
+        },
+        clickCancelSubcategoria() {
+            this.$refs.subcategoriaDialog.setDialog(false);
+            this.resetSubcategoria();
+        },
         deleteSubcategoria(subcategoria) {
             subcategoria.deleted = true;
+            console.log(this.subcategorias);
         },
-        sort(a, b) {
-            return (a.descricao > b.descricao) ? 1 : ((b.descricao > a.descricao) ? -1 : 0);
-        }
     },
     async created() {
         try {
@@ -264,26 +282,38 @@ export default {
     margin-bottom: 10px;
 }
 
-.subcategorias {
+.container-subcategorias {
     display: flex;
     flex-direction: column;
 }
 
-.subcategoria {
-    text-decoration: none;
-}
-
-.subcategoria:hover {
-    background-color: var(--opacity-grey-color);
+.subcategorias {
+    display: flex;
 }
 
 .subcategoria-dialog {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    width: 100%;
+}
+
+.subcategoria {
+    flex-grow: 1;
+    text-decoration: none;
     color: var(--dark-color);
     font-weight: 400;
-    padding: 4px 0;
+    padding: 8px 0;
+}
+
+.subcategoria:hover {
+    background-color: var(--opacity-grey-color);
+    border-radius: 6px;
+    padding: 8px 0;
+}
+
+.subcategoria-btn {
+    flex-grow: 0;
 }
 
 .btn-add-subcategoria {
