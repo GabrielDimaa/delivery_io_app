@@ -1,11 +1,11 @@
 <template>
     <v-container id="categorias" fluid class="ma-0 pa-0">
         <div class="mb-4">
-            <DialogDefault ref="dialog" text-btn-confirm="Salvar" title="Cadastrar categoria"
+            <DialogDefault ref="dialog" text-btn-confirm="Salvar" :title="titleForm"
                            :loading="loadingForm" :click-confirm="save">
                 <template v-slot:activator="{on, attrs}">
                     <v-btn class="btn" color="var(--primary-color)" @click="resetFields"  v-on="on" :attrs="attrs">
-                        Adicionar categoria
+                        Cadastrar
                     </v-btn>
                 </template>
 
@@ -104,6 +104,10 @@ export default {
     computed: {
         hideDataTable() {
             return this.categorias.length === 0;
+        },
+        titleForm() {
+            if (this.categoria.id_categoria) return "Alterar categoria";
+            else return "Cadastrar categoria";
         }
     },
     methods: {

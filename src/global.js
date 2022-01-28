@@ -1,8 +1,6 @@
 import axios from 'axios';
 import Vue from 'vue';
 
-const errorValidate = "Existem campos que não são válidos!";
-
 const api = axios.create({
     baseURL: "http://localhost:8000/api/"
 });
@@ -21,4 +19,4 @@ function showError(error) {
     }
 }
 
-export {errorValidate, api, showSuccess, showError};
+export {api, showSuccess, showError};

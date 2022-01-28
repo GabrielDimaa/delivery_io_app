@@ -5,6 +5,7 @@ import store from './stores/store.js';
 import router from './router/router.js';
 import './plugins/toasted.js';
 import './plugins/vuemask.js';
+import './plugins/vuemoney.js';
 import 'es6-promise/auto.js';
 
 Vue.config.productionTip = false;
