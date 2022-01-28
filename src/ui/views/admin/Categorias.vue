@@ -131,7 +131,7 @@ export default {
         adicionarSubcategoriaNaLista(subcategoria) {
             this.subcategorias.push({
                 "id_subcategoria": null,
-                "id_categoria": null,
+                "id_categoria": subcategoria.id_categoria,
                 "descricao": subcategoria.descricao,
                 "deleted": false,
             });
@@ -164,10 +164,9 @@ export default {
                     const categoriaResponse = response.data.data;
 
                     if (this.categoria.id_categoria) {
-                        const categoriaFilter = this.categorias.filter(e => e.id_categoria === categoriaResponse.id_categoria);
-
-                        categoriaFilter.add(categoriaResponse);
-                        this.categorias = categoriaFilter;
+                        const categoriasFilter = this.categorias.filter(e => e.id_categoria !== categoriaResponse.id_categoria);
+                        categoriasFilter.push(categoriaResponse);
+                        this.categorias = categoriasFilter;
                     } else {
                         this.categorias.unshift(categoriaResponse)
                     }
@@ -193,6 +192,7 @@ export default {
                     showError("Houve um erro ao remover a categoria!");
                 }
 
+                this.categorias = this.categorias.filter(e => e.id_categoria !== this.categoria.id_categoria);
                 this.resetFields();
                 showSuccess();
             }  catch (err) {
@@ -202,9 +202,15 @@ export default {
             }
         },
         clickUpdateCategoria(categoria) {
-            console.log(categoria);
+            this.resetFields();
+
             this.categoria = {...categoria};
-            this.subcategorias = [...categoria.subcategorias];
+            categoria.subcategorias.forEach(e => {
+                const sub = {...e};
+                this.$set(sub, "deleted", false)
+                this.subcategorias.push(sub);
+            });
+
             this.$refs.dialog.setDialog(true);
         },
         async clickDeleteCategoria(categoria) {
@@ -232,6 +238,7 @@ export default {
                     if (subcategoria.id_subcategoria !== undefined) {
                         this.subcategoriaSelected.descricao = subcategoria.descricao;
                     } else {
+                        subcategoria.id_categoria = this.categoria.id_categoria;
                         this.adicionarSubcategoriaNaLista(subcategoria);
                     }
 
@@ -248,7 +255,6 @@ export default {
         },
         deleteSubcategoria(subcategoria) {
             subcategoria.deleted = true;
-            console.log(this.subcategorias);
         },
     },
     async created() {
