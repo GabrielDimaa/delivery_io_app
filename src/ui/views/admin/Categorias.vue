@@ -74,6 +74,7 @@
 import '@/plugins/vee';
 import {api, showSuccess, showError} from '../../../global';
 import {ValidationObserver, ValidationProvider} from 'vee-validate';
+import {sort} from "../../../utils/utils";
 import ListagemCategorias from '../../components/Categorias/ListagemCategorias';
 import DialogDefault from "../../components/shared/DialogDefault";
 import LoadingDefault from "../../components/shared/LoadingDefault";
@@ -140,9 +141,6 @@ export default {
                 "deleted": false,
             });
         },
-        sort(a, b) {
-            return (a.descricao > b.descricao) ? 1 : ((b.descricao > a.descricao) ? -1 : 0);
-        },
         async save() {
             try {
                 this.setLoadingForm(true);
@@ -175,7 +173,7 @@ export default {
                         this.categorias.unshift(categoriaResponse)
                     }
 
-                    this.categorias.sort(this.sort);
+                    this.categorias.sort(sort);
                     this.$refs.dialog.setDialog(false);
                     this.resetFields();
                     showSuccess();
@@ -269,7 +267,7 @@ export default {
 
             if (response.data.success) {
                 this.categorias = response.data.data.list;
-                this.categorias.sort(this.sort);
+                this.categorias.sort(sort);
             }
         } finally {
             this.setLoading(false);

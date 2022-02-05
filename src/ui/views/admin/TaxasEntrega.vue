@@ -30,7 +30,7 @@
                                                     <v-text-field
                                                         v-model="taxaEntrega.valor" :disabled="loadingForm" prefix="R$"
                                                         :error-messages="errors" label="Valor" required outlined
-                                                        v-money="{}" ref="valor">
+                                                        v-money="{}" id="valor">
                                                     </v-text-field>
                                                 </validation-provider>
                                             </v-col>
@@ -51,7 +51,7 @@
 
 <script>
 import {api, showError, showSuccess} from "../../../global";
-import {extractNumber} from "../../../utils/utils";
+import {extractNumber, sort} from "../../../utils/utils";
 import '@/plugins/vee';
 import {ValidationObserver, ValidationProvider} from 'vee-validate';
 import DialogDefault from "../../components/shared/DialogDefault";
@@ -93,12 +93,12 @@ export default {
         setLoadingForm(value) {
             this.loadingForm = value;
         },
-        sort(a, b) {
-            return (a.descricao > b.descricao) ? 1 : ((b.descricao > a.descricao) ? -1 : 0);
-        },
         resetFields() {
             if (this.$refs.formTaxasEntrega) this.$refs.formTaxasEntrega.reset();
-            this.$refs.valor.$el.getElementsByTagName('input')[0].value = 0;
+
+            const fieldValor = document.getElementById("valor");
+            if (fieldValor != null) fieldValor.value = "";
+
             this.taxaEntrega = {
                 "id_taxa_entrega": null,
                 "descricao": null,
@@ -137,7 +137,7 @@ export default {
                         this.taxasEntrega.push(taxaEntregaResponse)
                     }
 
-                    this.taxasEntrega.sort(this.sort);
+                    this.taxasEntrega.sort(sort);
                     this.$refs.dialog.setDialog(false);
                     this.resetFields();
                     showSuccess();
@@ -160,7 +160,7 @@ export default {
 
             if (response.data.success) {
                 this.taxasEntrega = response.data.data.list;
-                this.taxasEntrega.sort(this.sort);
+                this.taxasEntrega.sort(sort);
             }
         } finally {
             this.setLoading(false);

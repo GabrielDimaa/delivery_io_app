@@ -1,24 +1,23 @@
-import { required, digits, email, max } from 'vee-validate/dist/rules'
 import { extend, setInteractionMode } from 'vee-validate'
+import { required, numeric, max } from 'vee-validate/dist/rules'
 
 setInteractionMode('eager')
 
-extend('digits', {
-    ...digits,
-    message: '{_field_} needs to be {length} digits. ({_value_})',
-})
-
 extend('required', {
     ...required,
-    message: `O campo "{_field_}" é obrigatório!`,
+    message: "Campo obrigatório!",
+})
+
+extend('numeric', {
+    ...numeric,
+    message: "O campo deve conter apenas números!",
 })
 
 extend('max', {
     ...max,
-    message: '{_field_} may not be greater than {length} characters',
-})
-
-extend('email', {
-    ...email,
-    message: "E-mail inválido!",
-})
+    message: "O campo deve conter no máximo {max} caracteres!",
+    params: ['max'],
+    validate(value, {max}) {
+        return value.length <= max;
+    }
+});
