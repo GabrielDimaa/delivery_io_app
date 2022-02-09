@@ -39,9 +39,10 @@
                                         <v-col cols="12" sm="6" md="6" class="pb-0 pt-0">
                                             <validation-provider v-slot="{errors}" name="Categoria" rules="required">
                                                 <v-select v-model="categoria" :disabled="loadingForm"
-                                                      :items="categorias" return-object :error-messages="errors"
-                                                      label="Categoria" item-text="descricao" item-value="id_categoria"
-                                                      required outlined no-data-text="Nenhuma categoria">
+                                                          :items="categorias" return-object :error-messages="errors"
+                                                          label="Categoria" item-text="descricao"
+                                                          item-value="id_categoria"
+                                                          required outlined no-data-text="Nenhuma categoria">
                                                 </v-select>
                                             </validation-provider>
                                         </v-col>
@@ -51,7 +52,8 @@
                                                 <v-select
                                                     v-model="subcategoria" :disabled="disableFieldSubcategoria"
                                                     :items="subcategorias" return-object :error-messages="errors"
-                                                    label="Subcategoria" item-text="descricao" item-value="id_subcategoria"
+                                                    label="Subcategoria" item-text="descricao"
+                                                    item-value="id_subcategoria"
                                                     required outlined no-data-text="Nenhuma subcategoria">
                                                 </v-select>
                                             </validation-provider>
@@ -76,20 +78,52 @@
             </template>
         </DialogDefault>
 
+        <div>
+            <v-card v-for="prod in produtos" :key="prod.id_produto" width="260" class="card-produto mt-8 pa-4"
+                    elevation="2">
+                <v-img src="@/assets/img/hamburguer.png" height="128" contain/>
+
+                <h4 class="mt-4">{{ prod.descricao }}</h4>
+                <div class="preco">
+                    {{ prod.categoria.descricao }} - {{ prod.subcategoria.descricao }}
+                    <br>
+                    <span class="preco">{{ toMoney(prod.preco) }}</span>
+                </div>
+
+                <div class="d-flex flex-row-reverse">
+                    <v-btn icon color="yellow">
+                        <v-icon size="20">mdi-pencil</v-icon>
+                    </v-btn>
+
+                    <v-btn icon color="red" @click="remove(prod)">
+                        <v-icon size="20">mdi-delete</v-icon>
+                    </v-btn>
+                </div>
+            </v-card>
+        </div>
+
         <LoadingDefault :loading="loading.show" :message="loading.text"/>
+        <ConfirmDialog ref="confirmDialog"></ConfirmDialog>
     </v-container>
 </template>
 
 <script>
 import {api, showError, showSuccess} from "../../../global";
-import {extractNumber, sort} from "../../../utils/utils";
+import {extractNumber, sort, toMoney} from "../../../utils/utils";
 import LoadingDefault from "../../components/shared/LoadingDefault";
 import DialogDefault from "../../components/shared/DialogDefault";
+import ConfirmDialog from "../../components/shared/ConfirmDialog";
 import {ValidationObserver, ValidationProvider} from "vee-validate";
 
 export default {
     name: "Produtos",
-    components: {LoadingDefault, DialogDefault, ValidationObserver, ValidationProvider},
+    components: {
+        LoadingDefault,
+        DialogDefault,
+        ConfirmDialog,
+        ValidationObserver,
+        ValidationProvider,
+    },
     data: () => ({
         produto: {
             id_produto: null,
@@ -128,6 +162,9 @@ export default {
         },
         setLoadingForm(value) {
             this.loadingForm = value;
+        },
+        toMoney(value) {
+            return toMoney(value, true);
         },
         resetFields() {
             if (this.$refs.formProdutos) this.$refs.formProdutos.reset();
@@ -192,6 +229,29 @@ export default {
                 this.setLoadingForm(false);
             }
         },
+        async remove(produto) {
+            try {
+                const confirm = await this.$refs.confirmDialog.showDialog("Excluir", "Deseja excluir o produto?");
+
+                if (confirm) {
+                    this.setLoading(true, "Excluindo produto...");
+
+                    const response = await api.delete(`produtos/${produto.id_produto}`);
+
+                    if (!response.data.success) {
+                        showError("Houve um erro ao excluir o produto!");
+                    }
+
+                    this.produtos = this.produtos.filter(e => e.id_produto !== produto.id_produto);
+                    this.resetFields();
+                    showSuccess();
+                }
+            }  catch (err) {
+                showError(err);
+            } finally {
+                this.setLoading(false);
+            }
+        },
     },
     async created() {
         try {
@@ -222,5 +282,14 @@ export default {
     text-transform: none;
     font-weight: 400;
     letter-spacing: 1px;
+}
+
+#produtos .card-produto {
+    border-radius: 12px;
+}
+
+.card-produto .preco {
+    color: var(--grey-color);
+    font-size: 14px;
 }
 </style>

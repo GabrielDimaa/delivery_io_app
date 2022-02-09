@@ -191,7 +191,7 @@ export default {
                 const response = await api.delete(`categorias/${this.categoria.id_categoria}`);
 
                 if (!response.data.success) {
-                    showError("Houve um erro ao remover a categoria!");
+                    showError("Houve um erro ao excluir a categoria!");
                 }
 
                 this.categorias = this.categorias.filter(e => e.id_categoria !== this.categoria.id_categoria);
