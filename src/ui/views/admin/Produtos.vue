@@ -26,11 +26,10 @@
 
                                         <v-col cols="12" sm="6" md="3" class="pb-0">
                                             <validation-provider v-slot="{errors}" name="Preço">
-                                                <v-text-field
+                                                <vuetify-money
                                                     v-model="produto.preco" :disabled="loadingForm"
                                                     :error-messages="errors" label="Preço" outlined
-                                                    prefix="R$" v-money="{}" id="preco">
-                                                </v-text-field>
+                                                    :options="options" placeholder="0,00" required/>
                                             </validation-provider>
                                         </v-col>
                                     </v-row>
@@ -140,7 +139,14 @@ export default {
             show: false,
             text: ""
         },
-        loadingForm: false
+        loadingForm: false,
+        options: {
+            locale: "pt-BR",
+            prefix: "R$",
+            suffix: "",
+            length: 11,
+            precision: 2
+        }
     }),
     computed: {
         titleForm() {
