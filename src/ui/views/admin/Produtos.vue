@@ -78,29 +78,27 @@
             </template>
         </DialogDefault>
 
-        <div>
-            <v-card v-for="prod in produtos" :key="prod.id_produto" width="260" class="card-produto mt-8 pa-4"
-                    elevation="2">
-                <v-img src="@/assets/img/hamburguer.png" height="128" contain/>
+        <v-card v-for="prod in produtos" :key="prod.id_produto" width="260" class="card-produto mt-8 pa-4"
+                elevation="2">
+            <v-img src="@/assets/img/hamburguer.png" height="128" contain/>
 
-                <h4 class="mt-4">{{ prod.descricao }}</h4>
-                <div class="preco">
-                    {{ prod.categoria.descricao }} - {{ prod.subcategoria.descricao }}
-                    <br>
-                    <span class="preco">{{ toMoney(prod.preco) }}</span>
-                </div>
+            <h4 class="mt-4">{{ prod.descricao }}</h4>
+            <div class="preco">
+                {{ prod.categoria.descricao }} - {{ prod.subcategoria.descricao }}
+                <br>
+                <span class="preco">{{ toMoney(prod.preco) }}</span>
+            </div>
 
-                <div class="d-flex flex-row-reverse">
-                    <v-btn icon color="yellow">
-                        <v-icon size="20">mdi-pencil</v-icon>
-                    </v-btn>
+            <div class="d-flex flex-row-reverse">
+                <v-btn icon color="yellow" @click="openDialogUpdate(prod)">
+                    <v-icon size="20">mdi-pencil</v-icon>
+                </v-btn>
 
-                    <v-btn icon color="red" @click="remove(prod)">
-                        <v-icon size="20">mdi-delete</v-icon>
-                    </v-btn>
-                </div>
-            </v-card>
-        </div>
+                <v-btn icon color="red" @click="remove(prod)">
+                    <v-icon size="20">mdi-delete</v-icon>
+                </v-btn>
+            </div>
+        </v-card>
 
         <LoadingDefault :loading="loading.show" :message="loading.text"/>
         <ConfirmDialog ref="confirmDialog"></ConfirmDialog>
@@ -172,6 +170,8 @@ export default {
             const fieldPreco = document.getElementById("preco");
             if (fieldPreco != null) fieldPreco.value = "";
 
+            this.categoria = null;
+            this.subcategoria = null;
             this.produto = {
                 id_produto: null,
                 descricao: null,
@@ -180,9 +180,6 @@ export default {
                 preco: null,
                 sobre: null
             };
-
-            this.categoria = null;
-            this.subcategoria = null;
         },
         async save() {
             try {
@@ -190,7 +187,7 @@ export default {
 
                 const validate = await this.$refs.formProdutos.validate();
 
-                if (extractNumber(this.produto.preco) <= 0) showError("Preço do produto deve ser maior que zero!");
+                if (extractNumber(this.produto.preco) <= 0) return showError("Preço do produto deve ser maior que zero!");
 
                 if (validate) {
                     const postPut = this.produto.id_produto ? 'put' : 'post';
@@ -212,7 +209,8 @@ export default {
 
                     if (this.produto.id_produto) {
                         const produtosFilter = this.produtos.filter(e => e.id_produto !== produtoResponse.id_produto);
-                        produtosFilter.push(produtoResponse);
+                        this.produto = {...produtoResponse};
+                        produtosFilter.push(this.produto);
                         this.produtos = produtosFilter;
                     } else {
                         this.produtos.push(produtoResponse)
@@ -246,12 +244,25 @@ export default {
                     this.resetFields();
                     showSuccess();
                 }
-            }  catch (err) {
+            } catch (err) {
                 showError(err);
             } finally {
                 this.setLoading(false);
             }
         },
+        openDialogUpdate(produto) {
+            this.resetFields();
+
+            this.produto = {...produto};
+            //Adiciona casas decimais pq senão o campo preço fica incorreto.
+            //se o preço for 750, ficaria 7,50, com o toFixed() fica 750,00.
+            this.produto.preco = parseFloat(this.produto.preco).toFixed(2);
+
+            this.categoria = this.categorias.filter(e => e.id_categoria === produto.id_categoria)[0];
+            this.subcategoria = this.categoria.subcategorias.filter(e => e.id_subcategoria === produto.id_subcategoria)[0];
+
+            this.$refs.dialog.setDialog(true);
+        }
     },
     async created() {
         try {
