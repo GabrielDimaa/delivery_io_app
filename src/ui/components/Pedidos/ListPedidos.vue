@@ -1,14 +1,14 @@
 <template>
     <div class="container-pedidos">
         <div class="lista-pedidos">
-            <div v-for="teste in testes" :key="teste">
-                <v-card height="126" class="card-pedido-resumido mt-2" elevation="2">
+            <div v-for="pedido in pedidos" :key="pedido.id_pedido">
+                <v-card height="126" class="card-pedido-resumido mt-2" elevation="2" @click="selectPedido(pedido)" ripple>
                     <div class="card-header">
-                        <span class="codigo-pedido">#00350</span>
+                        <span class="codigo-pedido">#{{pedido.codigo_pedido}}</span>
                         <small class="hora-pedido">20:36</small>
                     </div>
 
-                    <div class="text-info">Gabriel de Matos Hainzenreder</div>
+                    <div class="text-info">{{pedido.nome}}</div>
 
                     <div class="flex-entrega-valor-total">
                         <div class="entrega-info">
@@ -19,11 +19,11 @@
 
                             <div class="tipo-entrega mt-1">
                                 <v-icon size="16" color="var(--primary-color)">mdi-store</v-icon>
-                                <div class="text-info ml-1">Retirada no local</div>
+                                <div class="text-info ml-1">{{tipoEntregaDispay(pedido.tipo_entrega)}}</div>
                             </div>
                         </div>
 
-                        <div class="valor-total mt-1">R$56,00</div>
+                        <div class="valor-total mt-1">{{toMoney(pedido.valor_total)}}</div>
                     </div>
 
                     <div class="flex-btn">
@@ -36,11 +36,31 @@
 </template>
 
 <script>
+import {mapActions, mapState} from "vuex";
+import {toMoney} from "../../../utils/utils";
+import TipoEntrega from "../../../enums/tipoEntrega";
+
 export default {
     name: "ListPedidos",
-    data: () => ({
-        testes: Array(10),
-    })
+    computed: {
+        ...mapState('pedidos', ['pedidoSelected', 'pedidos', 'loading']),
+    },
+    methods: {
+        ...mapActions('pedidos', ['setPedidoSelected']),
+        selectPedido(pedido) {
+            this.setPedidoSelected(pedido);
+        },
+        tipoEntregaDispay(tipoEntrega) {
+            if (tipoEntrega === TipoEntrega.Entrega.value) {
+                return TipoEntrega.Entrega.descricao;
+            } else {
+                return TipoEntrega.Retirada.descricao;
+            }
+        },
+        toMoney(value) {
+            return toMoney(value, true);
+        },
+    }
 }
 </script>
 
@@ -50,7 +70,7 @@ export default {
 }
 
 .container-pedidos .lista-pedidos {
-    height: calc(100vh - var(--height-appbar) - (var(--padding-content) * 2) - 50px);
+    height: calc(100vh - var(--height-appbar) - (var(--padding-content) * 2));
     padding-right: 8px;
     overflow: auto;
 }

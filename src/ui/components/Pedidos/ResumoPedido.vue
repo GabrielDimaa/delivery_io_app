@@ -2,7 +2,7 @@
     <v-card id="card-pedido" elevation="2">
         <div class="info-pedido">
             <div class="card-header flex">
-                <h3 id="title">Pedido #00350</h3>
+                <h3 id="title">Pedido #{{pedidoSelected.codigo_pedido}}</h3>
                 <div>
                     <v-icon class="mr-1" size="20" color="#FF3D00">mdi-clock-outline</v-icon>
                     Horário do pedido: 20:32
@@ -11,12 +11,12 @@
 
             <TileResumoPedido label="Entrega prevista:" value="20:32" icon="mdi-timer-outline"
                               color="var(--secondary-color)"/>
-            <TileResumoPedido label="Tipo de entrega:" value="Retirada no local" icon="mdi-moped"
+            <TileResumoPedido label="Tipo de entrega:" :value="tipoEntregaDispay(pedidoSelected.tipo_entrega)" icon="mdi-moped"
                               color="var(--primary-color)"/>
 
             <v-divider class="mt-3 mb-3"></v-divider>
 
-            <TileResumoPedido label="Cliente:" value="Retirada no local" icon="mdi-account" color="brown"/>
+            <TileResumoPedido label="Cliente:" :value="pedidoSelected.nome" icon="mdi-account" color="brown"/>
             <TileResumoPedido label="Telefone:" value="(51) 99674-0385" icon="mdi-phone-classic" color="#54C964"/>
             <TileResumoPedido label="Endereço:" value="Avenida José Amâncio da Rosa, 1165, Casa, São João, Torres - RS"
                               icon="mdi-map-marker" color="red"/>
@@ -51,6 +51,8 @@
 
 <script>
 import TileResumoPedido from "./TileResumoPedido";
+import TipoEntrega from "../../../enums/tipoEntrega";
+import {mapState} from "vuex";
 
 export default {
     name: "ResumoPedido",
@@ -71,6 +73,18 @@ export default {
             },
         ],
     }),
+    computed: {
+        ...mapState('pedidos', ['pedidoSelected'])
+    },
+    methods: {
+        tipoEntregaDispay(tipoEntrega) {
+            if (tipoEntrega === TipoEntrega.Entrega.value) {
+                return TipoEntrega.Entrega.descricao;
+            } else {
+                return TipoEntrega.Retirada.descricao;
+            }
+        },
+    }
 }
 </script>
 
