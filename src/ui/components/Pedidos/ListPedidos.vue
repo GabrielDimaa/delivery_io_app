@@ -2,32 +2,38 @@
     <div class="container-pedidos">
         <div class="lista-pedidos">
             <div v-for="pedido in pedidos" :key="pedido.id_pedido">
-                <v-card height="126" class="card-pedido-resumido mt-2" elevation="2" @click="selectPedido(pedido)" ripple>
-                    <div class="card-header">
-                        <span class="codigo-pedido">#{{pedido.codigo_pedido}}</span>
-                        <small class="hora-pedido">20:36</small>
-                    </div>
+                <v-card height="126" class="card-pedido-resumido mt-2" elevation="2" @click="selectPedido(pedido)" ripple >
+                    <div class="d-flex card-body">
+                        <div class="card-barra" :class="{'card-selected': cardSelected(pedido)}"></div>
 
-                    <div class="text-info">{{pedido.nome}}</div>
-
-                    <div class="flex-entrega-valor-total">
-                        <div class="entrega-info">
-                            <div class="previsao-entrega mt-1">
-                                <v-icon size="16" color="#FF3D00">mdi-timer-outline</v-icon>
-                                <div class="text-info ml-1">Previsão: 21:06</div>
+                        <div class="card-content">
+                            <div class="card-header">
+                                <span class="codigo-pedido">#{{pedido.codigo_pedido}}</span>
+                                <small class="hora-pedido">20:36</small>
                             </div>
 
-                            <div class="tipo-entrega mt-1">
-                                <v-icon size="16" color="var(--primary-color)">mdi-store</v-icon>
-                                <div class="text-info ml-1">{{tipoEntregaDispay(pedido.tipo_entrega)}}</div>
+                            <div class="text-info">{{pedido.nome}}</div>
+
+                            <div class="flex-entrega-valor-total">
+                                <div class="entrega-info">
+                                    <div class="previsao-entrega mt-1">
+                                        <v-icon size="16" color="#FF3D00">mdi-timer-outline</v-icon>
+                                        <div class="text-info ml-1">Previsão: 21:06</div>
+                                    </div>
+
+                                    <div class="tipo-entrega mt-1">
+                                        <v-icon size="16" color="var(--primary-color)">mdi-store</v-icon>
+                                        <div class="text-info ml-1">{{tipoEntregaDispay(pedido.tipo_entrega)}}</div>
+                                    </div>
+                                </div>
+
+                                <div class="valor-total mt-1">{{toMoney(pedido.valor_total)}}</div>
+                            </div>
+
+                            <div class="flex-btn">
+                                <v-btn class="btn-aceitar" text color="#0BB865">Aceitar</v-btn>
                             </div>
                         </div>
-
-                        <div class="valor-total mt-1">{{toMoney(pedido.valor_total)}}</div>
-                    </div>
-
-                    <div class="flex-btn">
-                        <v-btn class="btn-aceitar" text color="#0BB865">Aceitar</v-btn>
                     </div>
                 </v-card>
             </div>
@@ -60,6 +66,13 @@ export default {
         toMoney(value) {
             return toMoney(value, true);
         },
+        cardSelected(pedido) {
+            if (this.pedidoSelected.id_pedido === pedido.id_pedido)
+                return "card-selected";
+            else {
+                return "";
+            }
+        }
     }
 }
 </script>
@@ -77,7 +90,29 @@ export default {
 
 .container-pedidos .card-pedido-resumido {
     border-radius: 16px;
-    padding: 6px 12px;
+    display: flex;
+    flex-direction: column;
+}
+
+.container-pedidos .card-barra {
+    width: 5px;
+    margin: 10px 0;
+    border-radius: 12px;
+    background: transparent;
+}
+
+.container-pedidos .card-selected {
+    background: #503E9D;
+    transition: background 0.8s;
+}
+
+.container-pedidos .card-body {
+    flex-grow: 1;
+}
+
+.container-pedidos .card-content {
+    padding: 6px 12px 6px 8px;
+    flex-grow: 2;
     display: flex;
     flex-direction: column;
 }
