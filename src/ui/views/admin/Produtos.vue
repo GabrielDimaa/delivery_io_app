@@ -77,7 +77,7 @@
             </template>
         </DialogDefault>
 
-        <v-card v-for="prod in produtos" :key="prod.id_produto" width="260" class="card-produto mt-8 pa-4"
+        <v-card v-for="prod in produtos" :key="prod.idProduto" width="260" class="card-produto mt-8 pa-4"
                 elevation="2">
             <v-img src="@/assets/img/hamburguer.png" height="128" contain/>
 
@@ -111,6 +111,7 @@ import LoadingDefault from "../../components/shared/LoadingDefault";
 import DialogDefault from "../../components/shared/DialogDefault";
 import ConfirmDialog from "../../components/shared/ConfirmDialog";
 import {ValidationObserver, ValidationProvider} from "vee-validate";
+import ProdutoModel from "../../../models/produtoModel";
 
 export default {
     name: "Produtos",
@@ -122,14 +123,7 @@ export default {
         ValidationProvider,
     },
     data: () => ({
-        produto: {
-            id_produto: null,
-            descricao: null,
-            id_categoria: null,
-            id_subcategoria: null,
-            preco: null,
-            sobre: null
-        },
+        produto: new ProdutoModel(),
         produtos: [],
         categorias: [],
         //categoria e subcategoria devem ser null, pq senão não será validado no form v-select
@@ -150,7 +144,7 @@ export default {
     }),
     computed: {
         titleForm() {
-            return this.produto.id_produto ? "Alterar produto" : "Cadastrar produto";
+            return this.produto.idProduto ? "Alterar produto" : "Cadastrar produto";
         },
         disableFieldSubcategoria() {
             return this.loadingForm || !(this.categoria?.id_categoria ?? false);
@@ -178,14 +172,7 @@ export default {
 
             this.categoria = null;
             this.subcategoria = null;
-            this.produto = {
-                id_produto: null,
-                descricao: null,
-                id_categoria: null,
-                id_subcategoria: null,
-                preco: null,
-                sobre: null
-            };
+            this.produto = new ProdutoModel();
         },
         async save() {
             try {
@@ -196,13 +183,13 @@ export default {
                 if (extractNumber(this.produto.preco) <= 0) return showError("Preço do produto deve ser maior que zero!");
 
                 if (validate) {
-                    const postPut = this.produto.id_produto ? 'put' : 'post';
-                    const id = this.produto.id_produto ? `/${this.produto.id_produto}` : "";
+                    const postPut = this.produto.idProduto ? 'put' : 'post';
+                    const id = this.produto.idProduto ? `/${this.produto.idProduto}` : "";
 
                     this.produto.id_categoria = this.categoria.id_categoria;
                     this.produto.id_subcategoria = this.subcategoria.id_subcategoria;
 
-                    const data = {...this.produto};
+                    const data = this.produto.toJson();
                     data.preco = extractNumber(data.preco);
 
                     const response = await api[postPut](`produtos${id}`, data);
@@ -211,11 +198,11 @@ export default {
                         showError("Houve um erro ao concluir a operação!");
                     }
 
-                    const produtoResponse = response.data.data;
+                    const produtoResponse = ProdutoModel.fromJson(response.data.data);
 
-                    if (this.produto.id_produto) {
-                        const produtosFilter = this.produtos.filter(e => e.id_produto !== produtoResponse.id_produto);
-                        this.produto = {...produtoResponse};
+                    if (this.produto.idProduto) {
+                        const produtosFilter = this.produtos.filter(e => e.idProduto !== produtoResponse.idProduto);
+                        this.produto = produtoResponse.toJson();
                         produtosFilter.push(this.produto);
                         this.produtos = produtosFilter;
                     } else {
@@ -240,13 +227,13 @@ export default {
                 if (confirm) {
                     this.setLoading(true, "Excluindo produto...");
 
-                    const response = await api.delete(`produtos/${produto.id_produto}`);
+                    const response = await api.delete(`produtos/${produto.idProduto}`);
 
                     if (!response.data.success) {
                         showError("Houve um erro ao excluir o produto!");
                     }
 
-                    this.produtos = this.produtos.filter(e => e.id_produto !== produto.id_produto);
+                    this.produtos = this.produtos.filter(e => e.idProduto !== produto.idProduto);
                     this.resetFields();
                     showSuccess();
                 }
@@ -259,14 +246,15 @@ export default {
         openDialogUpdate(produto) {
             this.resetFields();
 
-            this.produto = {...produto};
+            this.produto = produto.clone();
             //Adiciona casas decimais pq senão o campo preço fica incorreto.
             //se o preço for 750, ficaria 7,50, com o toFixed() fica 750,00.
             this.produto.preco = parseFloat(this.produto.preco).toFixed(2);
 
-            this.categoria = this.categorias.filter(e => e.id_categoria === produto.id_categoria)[0];
+            this.categoria = this.categorias.filter(e => e.id_categoria === produto.idCategoria)[0];
             this.subcategoria = this.categoria.subcategorias.filter(e => e.id_subcategoria === produto.id_subcategoria)[0];
 
+            console.log(this.produto);
             this.$refs.dialog.setDialog(true);
         }
     },
@@ -278,7 +266,8 @@ export default {
             const responseCat = await api.get("categorias");
 
             if (responseProd.data.success) {
-                this.produtos = responseProd.data.data.list;
+                const produtos = responseProd.data.data.list;
+                produtos.forEach(it => this.produtos.push(ProdutoModel.fromJson(it)));
                 this.produtos.sort(sort);
             }
 
