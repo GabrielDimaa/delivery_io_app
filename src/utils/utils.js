@@ -24,4 +24,9 @@ function formatterPhone(phone) {
     return phone;
 }
 
-export {extractNumber, sort, toMoney, formatterPhone}
+function convertTZ(date) {
+    if (typeof date === "string") date = new Date(date);
+    return new Date(date.toLocaleString("en-US", {timeZone: "America/Sao_Paulo"}));
+}
+
+export {extractNumber, sort, toMoney, formatterPhone, convertTZ}

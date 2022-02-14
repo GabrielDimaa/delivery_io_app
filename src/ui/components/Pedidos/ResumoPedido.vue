@@ -5,7 +5,7 @@
                 <h3 id="title">Pedido #{{pedidoSelected.codigo_pedido}}</h3>
                 <div>
                     <v-icon class="mr-1" size="20" color="#FF3D00">mdi-clock-outline</v-icon>
-                    Horário do pedido: 20:32
+                    Horário do pedido: {{horarioPedidoDisplay}}
                 </div>
             </div>
 
@@ -76,7 +76,7 @@ export default {
     }),
     computed: {
         ...mapState('pedidos', ['pedidoSelected']),
-        ...mapGetters('pedidos', ['itensPedido', 'enderecoClienteDisplay']),
+        ...mapGetters('pedidos', ['itensPedido', 'enderecoClienteDisplay', 'horarioPedidoDisplay']),
         isRetirada() {
               return this.pedidoSelected.tipo_entrega === TipoEntrega.Retirada.value;
         },
