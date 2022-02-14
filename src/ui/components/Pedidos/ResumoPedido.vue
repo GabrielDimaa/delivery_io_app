@@ -11,20 +11,20 @@
 
             <TileResumoPedido label="Entrega prevista:" value="20:32" icon="mdi-timer-outline"
                               color="var(--secondary-color)"/>
-            <TileResumoPedido label="Tipo de entrega:" :value="tipoEntregaDispay(pedidoSelected.tipo_entrega)" icon="mdi-moped"
+            <TileResumoPedido label="Tipo de entrega:" :value="tipoEntregaDisplay" icon="mdi-moped"
                               color="var(--primary-color)"/>
 
             <v-divider class="mt-3 mb-3"></v-divider>
 
             <TileResumoPedido label="Cliente:" :value="pedidoSelected.nome" icon="mdi-account" color="brown"/>
-            <TileResumoPedido label="Telefone:" value="(51) 99674-0385" icon="mdi-phone-classic" color="#54C964"/>
-            <TileResumoPedido label="Endereço:" value="Avenida José Amâncio da Rosa, 1165, Casa, São João, Torres - RS"
+            <TileResumoPedido label="Telefone:" :value="formatarTelefone(pedidoSelected.telefone)" icon="mdi-phone-classic" color="#54C964"/>
+            <TileResumoPedido v-if="!isRetirada" label="Endereço:" :value="enderecoClienteDisplay"
                               icon="mdi-map-marker" color="red"/>
 
             <h4 class="mt-4">Itens</h4>
 
             <v-list class="list-itens">
-                <template v-for="item in items">
+                <template v-for="item in itensPedido">
                     <v-list-item :key="item.produto" style="padding: 0">
                         <v-list-item-avatar size="50" rounded>
                             <v-img :src="item.img" width="50"></v-img>
@@ -32,9 +32,9 @@
 
                         <v-list-item-content>
                             <div class="list-item-content">
-                                <div class="produto">{{item.produto}}</div>
-                                <div class="preco-unitario-produto">{{item.precoUnitario}}</div>
-                                <div class="valor-total-produto">{{item.valorTotal}}</div>
+                                <div class="produto">{{item.descricao}}</div>
+                                <div class="preco-unitario-produto">{{qtdValorUnitarioItemDisplay(item)}}</div>
+                                <div class="valor-total-produto">{{toMoney(item.valor_total)}}</div>
                             </div>
                         </v-list-item-content>
                     </v-list-item>
@@ -52,7 +52,8 @@
 <script>
 import TileResumoPedido from "./TileResumoPedido";
 import TipoEntrega from "../../../enums/tipoEntrega";
-import {mapState} from "vuex";
+import {mapGetters, mapState} from "vuex";
+import {formatterPhone, toMoney} from "../../../utils/utils";
 
 export default {
     name: "ResumoPedido",
@@ -74,16 +75,29 @@ export default {
         ],
     }),
     computed: {
-        ...mapState('pedidos', ['pedidoSelected'])
+        ...mapState('pedidos', ['pedidoSelected']),
+        ...mapGetters('pedidos', ['itensPedido', 'enderecoClienteDisplay']),
+        isRetirada() {
+              return this.pedidoSelected.tipo_entrega === TipoEntrega.Retirada.value;
+        },
+        tipoEntregaDisplay() {
+            if (this.isRetirada) {
+                return TipoEntrega.Retirada.descricao;
+            } else {
+                return TipoEntrega.Entrega.descricao;
+            }
+        }
     },
     methods: {
-        tipoEntregaDispay(tipoEntrega) {
-            if (tipoEntrega === TipoEntrega.Entrega.value) {
-                return TipoEntrega.Entrega.descricao;
-            } else {
-                return TipoEntrega.Retirada.descricao;
-            }
+        toMoney(value) {
+            return toMoney(value, true);
         },
+        formatarTelefone(value) {
+            return formatterPhone(value);
+        },
+        qtdValorUnitarioItemDisplay(item) {
+            return `${item.quantidade}UN x ${this.toMoney(item.valor_unitario)}`;
+        }
     }
 }
 </script>

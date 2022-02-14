@@ -86,6 +86,7 @@ export default {
     color: var(--primary-color);
     font-size: 15px;
     font-weight: 600;
+    transition: background 0.8s;
 }
 
 .item-menu {
@@ -93,7 +94,6 @@ export default {
     text-decoration: none;
     width: 100%;
     background-position: center;
-    transition: background 0.8s;
 }
 
 .item-menu:hover {

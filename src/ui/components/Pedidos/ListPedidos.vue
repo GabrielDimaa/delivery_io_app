@@ -2,7 +2,7 @@
     <div class="container-pedidos">
         <div class="lista-pedidos">
             <div v-for="pedido in pedidos" :key="pedido.id_pedido">
-                <v-card height="126" class="card-pedido-resumido mt-2" elevation="2" @click="selectPedido(pedido)" ripple >
+                <v-card height="126" class="card-pedido-resumido mt-2" elevation="2" @click="selectPedido(pedido)" ripple>
                     <div class="d-flex card-body">
                         <div class="card-barra" :class="{'card-selected': cardSelected(pedido)}"></div>
 
@@ -23,7 +23,7 @@
 
                                     <div class="tipo-entrega mt-1">
                                         <v-icon size="16" color="var(--primary-color)">mdi-store</v-icon>
-                                        <div class="text-info ml-1">{{tipoEntregaDispay(pedido.tipo_entrega)}}</div>
+                                        <div class="text-info ml-1">{{ tipoEntregaDisplay(pedido.tipo_entrega) }}</div>
                                     </div>
                                 </div>
 
@@ -56,7 +56,7 @@ export default {
         selectPedido(pedido) {
             this.setPedidoSelected(pedido);
         },
-        tipoEntregaDispay(tipoEntrega) {
+        tipoEntregaDisplay(tipoEntrega) {
             if (tipoEntrega === TipoEntrega.Entrega.value) {
                 return TipoEntrega.Entrega.descricao;
             } else {

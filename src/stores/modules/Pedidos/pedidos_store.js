@@ -11,6 +11,13 @@ export default {
     getters: {
         pedidosEmpty(state) {
             return state.pedidos.length === 0;
+        },
+        itensPedido(state) {
+            return state.pedidoSelected?.itens ?? [];
+        },
+        enderecoClienteDisplay(state) {
+            const p = state.pedidoSelected;
+            return `${p.rua}, ${p.numero}, ${p.bairro}, ${p.complemento != null ? p.complemento + ", " : ""}${p.cidade}`;
         }
     },
     mutations: {
