@@ -40,7 +40,7 @@
                                                 <v-select v-model="categoria" :disabled="loadingForm"
                                                           :items="categorias" return-object :error-messages="errors"
                                                           label="Categoria" item-text="descricao"
-                                                          item-value="id_categoria"
+                                                          item-value="idCategoria"
                                                           required outlined no-data-text="Nenhuma categoria">
                                                 </v-select>
                                             </validation-provider>
@@ -52,7 +52,7 @@
                                                     v-model="subcategoria" :disabled="disableFieldSubcategoria"
                                                     :items="subcategorias" return-object :error-messages="errors"
                                                     label="Subcategoria" item-text="descricao"
-                                                    item-value="id_subcategoria"
+                                                    item-value="idSubcategoria"
                                                     required outlined no-data-text="Nenhuma subcategoria">
                                                 </v-select>
                                             </validation-provider>
@@ -112,6 +112,8 @@ import DialogDefault from "../../components/shared/DialogDefault";
 import ConfirmDialog from "../../components/shared/ConfirmDialog";
 import {ValidationObserver, ValidationProvider} from "vee-validate";
 import ProdutoModel from "../../../models/produtoModel";
+import CategoriaModel from "../../../models/categoriaModel";
+import SubcategoriaModel from "../../../models/subcategoriaModel";
 
 export default {
     name: "Produtos",
@@ -127,8 +129,8 @@ export default {
         produtos: [],
         categorias: [],
         //categoria e subcategoria devem ser null, pq senão não será validado no form v-select
-        categoria: null,
-        subcategoria: null,
+        categoria: new CategoriaModel(),
+        subcategoria: new SubcategoriaModel(),
         loading: {
             show: false,
             text: ""
@@ -147,7 +149,7 @@ export default {
             return this.produto.idProduto ? "Alterar produto" : "Cadastrar produto";
         },
         disableFieldSubcategoria() {
-            return this.loadingForm || !(this.categoria?.id_categoria ?? false);
+            return this.loadingForm || !(this.categoria?.idCategoria ?? false);
         },
         subcategorias() {
             return this.categoria?.subcategorias ?? [];
@@ -170,8 +172,8 @@ export default {
             const fieldPreco = document.getElementById("preco");
             if (fieldPreco != null) fieldPreco.value = "";
 
-            this.categoria = null;
-            this.subcategoria = null;
+            this.categoria = new CategoriaModel();
+            this.subcategoria = new SubcategoriaModel();
             this.produto = new ProdutoModel();
         },
         async save() {
@@ -186,11 +188,10 @@ export default {
                     const postPut = this.produto.idProduto ? 'put' : 'post';
                     const id = this.produto.idProduto ? `/${this.produto.idProduto}` : "";
 
-                    this.produto.id_categoria = this.categoria.id_categoria;
-                    this.produto.id_subcategoria = this.subcategoria.id_subcategoria;
+                    this.produto.idCategoria = this.categoria.idCategoria;
+                    this.produto.idSubcategoria = this.subcategoria.idSubcategoria;
 
                     const data = this.produto.toJson();
-                    data.preco = extractNumber(data.preco);
 
                     const response = await api[postPut](`produtos${id}`, data);
 
@@ -202,7 +203,7 @@ export default {
 
                     if (this.produto.idProduto) {
                         const produtosFilter = this.produtos.filter(e => e.idProduto !== produtoResponse.idProduto);
-                        this.produto = produtoResponse.toJson();
+                        this.produto = produtoResponse;
                         produtosFilter.push(this.produto);
                         this.produtos = produtosFilter;
                     } else {
@@ -251,10 +252,9 @@ export default {
             //se o preço for 750, ficaria 7,50, com o toFixed() fica 750,00.
             this.produto.preco = parseFloat(this.produto.preco).toFixed(2);
 
-            this.categoria = this.categorias.filter(e => e.id_categoria === produto.idCategoria)[0];
-            this.subcategoria = this.categoria.subcategorias.filter(e => e.id_subcategoria === produto.id_subcategoria)[0];
+            this.categoria = this.categorias.filter(e => e.idCategoria === produto.idCategoria)[0];
+            this.subcategoria = this.categoria.subcategorias.filter(e => e.idSubcategoria === produto.idSubcategoria)[0];
 
-            console.log(this.produto);
             this.$refs.dialog.setDialog(true);
         }
     },
@@ -267,12 +267,13 @@ export default {
 
             if (responseProd.data.success) {
                 const produtos = responseProd.data.data.list;
-                produtos.forEach(it => this.produtos.push(ProdutoModel.fromJson(it)));
+                this.produtos = produtos.map(it => ProdutoModel.fromJson(it));
                 this.produtos.sort(sort);
             }
 
             if (responseCat.data.success) {
-                this.categorias = responseCat.data.data.list;
+                const categorias = responseCat.data.data.list;
+                this.categorias = categorias.map(it => CategoriaModel.fromJson(it));
                 this.categorias.sort(sort);
             }
         } finally {
