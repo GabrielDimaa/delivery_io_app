@@ -1,3 +1,6 @@
+import CategoriaModel from "./categoriaModel";
+import SubcategoriaModel from "./subcategoriaModel";
+
 export default class ProdutoModel {
     constructor(
         idProduto,
@@ -12,7 +15,7 @@ export default class ProdutoModel {
         subcategoria)
     {
         this.idProduto = idProduto;
-        this.descricao = descricao,
+        this.descricao = descricao;
         this.idCategoria = idCategoria;
         this.idSubcategoria = idSubcategoria;
         this.preco = preco;
@@ -45,8 +48,8 @@ export default class ProdutoModel {
             json.sobre,
             json.ativo,
             json.created_at,
-            json.categoria,
-            json.subcategoria
+            CategoriaModel.fromJson(json.categoria),
+            SubcategoriaModel.fromJson(json.subcategoria)
         );
     }
 
