@@ -1,10 +1,10 @@
 export default class StatusPedido {
-    static EmAberto = StatusPedido("Em aberto", 1);
-    static Aceito = StatusPedido("Aceito", 2);
-    static EmRotaDeEntrega = StatusPedido("Em rota de entrega", 3);
-    static ProntoParaRetirada = StatusPedido("Pronto para retirada", 4);
-    static Finalizado = StatusPedido("Finalizado", 5);
-    static Cancelado = StatusPedido("Cancelado", 6);
+    static EmAberto = new StatusPedido("Em aberto", 1);
+    static Aceito = new StatusPedido("Aceito", 2);
+    static EmRotaDeEntrega = new StatusPedido("Em rota de entrega", 3);
+    static ProntoParaRetirada = new StatusPedido("Pronto para retirada", 4);
+    static Finalizado = new StatusPedido("Finalizado", 5);
+    static Cancelado = new StatusPedido("Cancelado", 6);
 
     constructor(descricao, value) {
         this.descricao = descricao;

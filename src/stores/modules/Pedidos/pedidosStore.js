@@ -1,5 +1,3 @@
-import {convertTZ} from "../../../utils/utils";
-
 export default {
     namespaced: true,
     state: {
@@ -22,8 +20,7 @@ export default {
             return `${p.rua}, ${p.numero}, ${p.bairro}, ${p.complemento != null ? p.complemento + ", " : ""}${p.cidade}`;
         },
         horarioPedidoDisplay(state) {
-            const horarioSemTZ = convertTZ(state.pedidoSelected.created_at);
-            return `${horarioSemTZ.toTimeString().substring(0, 5)}`;
+            return `${state.pedidoSelected.toTimeString().substring(0, 5)}`;
         }
     },
     mutations: {

@@ -1,6 +1,6 @@
 export default class TipoEntrega {
-    static Entrega = TipoEntrega("Entrega", 1);
-    static Retirada = TipoEntrega("Retirada", 2);
+    static Entrega = new TipoEntrega("Entrega", 1);
+    static Retirada = new TipoEntrega("Retirada", 2);
 
     constructor(descricao, value) {
         this.descricao = descricao;
