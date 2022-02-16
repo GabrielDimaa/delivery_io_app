@@ -80,6 +80,7 @@ import DialogDefault from "../../components/shared/DialogDefault";
 import LoadingDefault from "../../components/shared/LoadingDefault";
 import ConfirmDialog from "../../components/shared/ConfirmDialog";
 import SubcategoriaDialog from "../../components/Categorias/SubcategoriaDialog";
+import CategoriaModel from "../../../models/categoriaModel";
 
 export default {
     name: "Categorias",
@@ -93,7 +94,7 @@ export default {
         ValidationObserver,
     },
     data: () => ({
-        categoria: {},
+        categoria: new CategoriaModel(),
         subcategoria: {"descricao":  ""},
         subcategoriaSelected: {},
         categorias: [],

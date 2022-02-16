@@ -3,8 +3,8 @@ export default class SubcategoriaModel {
         idSubcategoria,
         descricao,
         idCategoria,
-        deleted)
-    {
+        deleted
+    ) {
         this.idSubcategoria = idSubcategoria;
         this.descricao = descricao;
         this.idCategoria = idCategoria;
@@ -21,6 +21,8 @@ export default class SubcategoriaModel {
     }
 
     static fromJson(json) {
+        if (json === null) return null;
+
         return new SubcategoriaModel(
             json.id_subcategoria,
             json.descricao,

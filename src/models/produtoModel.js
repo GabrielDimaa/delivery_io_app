@@ -1,5 +1,6 @@
 import CategoriaModel from "./categoriaModel";
 import SubcategoriaModel from "./subcategoriaModel";
+import {convertTZ} from "../utils/utils";
 
 export default class ProdutoModel {
     constructor(
@@ -12,8 +13,8 @@ export default class ProdutoModel {
         ativo,
         createdAt,
         categoria,
-        subcategoria)
-    {
+        subcategoria
+    ) {
         this.idProduto = idProduto;
         this.descricao = descricao;
         this.idCategoria = idCategoria;
@@ -39,6 +40,8 @@ export default class ProdutoModel {
     }
 
     static fromJson(json) {
+        if (json === null) return null;
+
         return new ProdutoModel(
             json.id_produto,
             json.descricao,
@@ -47,7 +50,7 @@ export default class ProdutoModel {
             json.preco,
             json.sobre,
             json.ativo,
-            json.created_at,
+            convertTZ(json.created_at),
             CategoriaModel.fromJson(json.categoria),
             SubcategoriaModel.fromJson(json.subcategoria)
         );

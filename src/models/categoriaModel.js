@@ -4,8 +4,8 @@ export default class CategoriaModel {
     constructor(
         idCategoria,
         descricao,
-        subcategorias)
-    {
+        subcategorias
+    ) {
         this.idCategoria = idCategoria;
         this.descricao = descricao;
         this.subcategorias = subcategorias;
@@ -20,6 +20,8 @@ export default class CategoriaModel {
     }
 
     static fromJson(json) {
+        if (json === null) return null;
+
         return new CategoriaModel(
             json.id_categoria,
             json.descricao,
