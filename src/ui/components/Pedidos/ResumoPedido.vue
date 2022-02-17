@@ -43,8 +43,13 @@
         </div>
 
         <div class="buttons-pedido mt-3">
-            <v-btn class="btn" outlined color="var(--error-color)">Cancelar</v-btn>
-            <v-btn class="btn white--text" style="font-weight: 400" color="var(--primary-color)">Aceitar</v-btn>
+            <v-btn v-if="!hideButtonCancelar" class="btn" outlined color="var(--error-color)" @click="cancelarPedido(pedidoSelected)">
+                Cancelar
+            </v-btn>
+            <v-btn v-if="descricaoAcaoProximoStatus != null" class="btn white--text" style="font-weight: 400"
+                   color="var(--primary-color)" @click="alterarStatus(pedidoSelected)">
+                {{descricaoAcaoProximoStatus}}
+            </v-btn>
         </div>
     </v-card>
 </template>
@@ -52,20 +57,23 @@
 <script>
 import TileResumoPedido from "./TileResumoPedido";
 import TipoEntrega from "../../../enums/tipoEntrega";
-import {mapGetters, mapState} from "vuex";
-import {formatterPhone, toMoney} from "../../../utils/utils";
+import {mapActions, mapGetters, mapState} from "vuex";
+import {convertTZ, formatterPhone, toMoney} from "../../../utils/utils";
+import {api, showError, showSuccess} from "../../../global";
+import StatusPedido from "../../../enums/statusPedido";
 
 export default {
     name: "ResumoPedido",
     components: {TileResumoPedido},
     computed: {
         ...mapState('pedidos', ['pedidoSelected']),
-        ...mapGetters('pedidos', ['itensPedido']),
+        ...mapGetters('pedidos', ['itensPedido', 'proximoStatus', 'descricaoAcaoProximoStatus', 'hideButtonCancelar']),
         isRetirada() {
               return this.pedidoSelected.tipoEntrega === TipoEntrega.Retirada;
         }
     },
     methods: {
+        ...mapActions('pedidos', ['setLoading']),
         toMoney(value) {
             return toMoney(value, true);
         },
@@ -74,7 +82,49 @@ export default {
         },
         qtdValorUnitarioItemDisplay(item) {
             return `${item.quantidade}UN x ${this.toMoney(item.valorUnitario)}`;
-        }
+        },
+        async alterarStatus(pedido) {
+            try {
+                this.setLoading({show: true, text: "Alterando status do pedido..."});
+
+                const data = {
+                    "id_pedido": pedido.idPedido,
+                    "status": this.proximoStatus.value
+                };
+
+                const response = await api.put(`pedidos/status/${pedido.idPedido}`, data);
+
+                if (!response.data.success) {
+                    showError("Houve um erro ao concluir a operação!");
+                }
+
+                pedido.status = StatusPedido.fromIndex(response.data.data.status);
+                showSuccess();
+            } catch (err) {
+                showError(err);
+            } finally {
+                this.setLoading(false);
+            }
+        },
+        async cancelarPedido(pedido) {
+            try {
+                this.setLoading({show: true, text: "Cancelando pedido..."});
+
+                const response = await api.put(`pedidos/cancelar/${pedido.idPedido}`);
+
+                if (!response.data.success) {
+                    showError("Houve um erro ao concluir a operação!");
+                }
+
+                pedido.status = StatusPedido.fromIndex(response.data.data.status);
+                pedido.canceladoAt = convertTZ(response.data.data.cancelado_at);
+                showSuccess();
+            } catch (err) {
+                showError(err);
+            } finally {
+                this.setLoading(false);
+            }
+        },
     }
 }
 </script>
@@ -148,7 +198,7 @@ export default {
 
 .buttons-pedido .btn {
     height: 40px;
-    width: 160px;
+    min-width: 160px;
     border-radius: 10px;
     border-width: 2px;
     text-transform: none;

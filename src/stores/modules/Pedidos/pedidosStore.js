@@ -1,3 +1,6 @@
+import StatusPedido from "../../../enums/statusPedido";
+import TipoEntrega from "../../../enums/tipoEntrega";
+
 export default {
     namespaced: true,
     state: {
@@ -14,6 +17,39 @@ export default {
         },
         itensPedido(state) {
             return state.pedidoSelected?.itens ?? [];
+        },
+        proximoStatus(state) {
+            switch (state.pedidoSelected.status) {
+                case StatusPedido.EmAberto:
+                    return StatusPedido.Aceito;
+                case StatusPedido.Aceito:
+                    if (state.pedidoSelected.tipoEntrega === TipoEntrega.Entrega)
+                        return StatusPedido.EmRotaDeEntrega
+                    else
+                        return StatusPedido.ProntoParaRetirada;
+                case StatusPedido.EmRotaDeEntrega:
+                case StatusPedido.ProntoParaRetirada:
+                    return StatusPedido.Finalizado;
+                default:
+                    return null;
+            }
+        },
+        descricaoAcaoProximoStatus(state, getter) {
+            switch (getter.proximoStatus) {
+                case StatusPedido.Aceito:
+                    return "Aceitar";
+                case StatusPedido.EmRotaDeEntrega:
+                    return "Sair para entrega";
+                case StatusPedido.ProntoParaRetirada:
+                    return "Pronto para retirada";
+                case StatusPedido.Finalizado:
+                    return "Finalizar";
+                default:
+                    return null;
+            }
+        },
+        hideButtonCancelar(state) {
+            return state.pedidoSelected.status === StatusPedido.Finalizado || state.pedidoSelected.status === StatusPedido.Cancelado;
         }
     },
     mutations: {

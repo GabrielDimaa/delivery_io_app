@@ -23,6 +23,7 @@ export default class PedidoModel {
         observacao,
         createdAt,
         finalizadoAt,
+        canceladoAt,
         tempoEstimado,
         itens
     ) {
@@ -44,6 +45,7 @@ export default class PedidoModel {
         this.observacao = observacao;
         this.createdAt = createdAt;
         this.finalizadoAt = finalizadoAt;
+        this.canceladoAt = canceladoAt;
         this.tempoEstimado = tempoEstimado;
         this.itens = itens;
     }
@@ -101,6 +103,7 @@ export default class PedidoModel {
             json.observacao,
             convertTZ(json.created_at),
             convertTZ(json.finalizado_at),
+            convertTZ(json.cancelado_at),
             json.tempo_estimado,
             json.itens?.map(it => PedidoItemModel.fromJson(it)) ?? []
         );
@@ -126,6 +129,7 @@ export default class PedidoModel {
             this.observacao,
             this.createdAt,
             this.finalizadoAt,
+            this.canceladoAt,
             this.tempoEstimado,
             this.itens
         );
