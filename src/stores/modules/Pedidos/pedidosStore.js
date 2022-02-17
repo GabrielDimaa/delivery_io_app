@@ -14,13 +14,6 @@ export default {
         },
         itensPedido(state) {
             return state.pedidoSelected?.itens ?? [];
-        },
-        enderecoClienteDisplay(state) {
-            const p = state.pedidoSelected;
-            return `${p.rua}, ${p.numero}, ${p.bairro}, ${p.complemento != null ? p.complemento + ", " : ""}${p.cidade}`;
-        },
-        horarioPedidoDisplay(state) {
-            return `${state.pedidoSelected.toTimeString().substring(0, 5)}`;
         }
     },
     mutations: {
@@ -33,6 +26,10 @@ export default {
         SET_LOADING(state, payload) {
             state.loading.show = payload.show;
             state.loading.text = payload.show ? payload.text : "";
+        },
+        RESET_FIELDS(state) {
+            state.pedidoSelected = null;
+            state.pedidos = [];
         }
     },
     actions: {
@@ -44,6 +41,9 @@ export default {
         },
         setLoading(context, payload) {
             context.commit("SET_LOADING", payload);
+        },
+        resetFields(context) {
+            context.commit("RESET_FIELDS");
         }
     }
 };

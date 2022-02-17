@@ -1,15 +1,15 @@
 <template>
     <div class="container-pedidos">
         <div class="lista-pedidos">
-            <div v-for="pedido in pedidos" :key="pedido.id_pedido">
+            <div v-for="pedido in pedidos" :key="pedido.idPedido">
                 <v-card height="126" class="card-pedido-resumido mt-2" elevation="2" @click="selectPedido(pedido)" ripple>
                     <div class="d-flex card-body">
                         <div class="card-barra" :class="{'card-selected': cardSelected(pedido)}"></div>
 
                         <div class="card-content">
                             <div class="card-header">
-                                <span class="codigo-pedido">#{{pedido.codigo_pedido}}</span>
-                                <small class="hora-pedido">20:36</small>
+                                <span class="codigo-pedido">#{{pedido.codigoPedido}}</span>
+                                <small class="hora-pedido">{{pedido.horarioPedidoDisplay}}</small>
                             </div>
 
                             <div class="text-info">{{pedido.nome}}</div>
@@ -23,11 +23,11 @@
 
                                     <div class="tipo-entrega mt-1">
                                         <v-icon size="16" color="var(--primary-color)">mdi-store</v-icon>
-                                        <div class="text-info ml-1">{{ tipoEntregaDisplay(pedido.tipo_entrega) }}</div>
+                                        <div class="text-info ml-1">{{ pedido.tipoEntrega.descricao }}</div>
                                     </div>
                                 </div>
 
-                                <div class="valor-total mt-1">{{toMoney(pedido.valor_total)}}</div>
+                                <div class="valor-total mt-1">{{toMoney(pedido.valorTotal)}}</div>
                             </div>
 
                             <div class="flex-btn">
@@ -44,7 +44,6 @@
 <script>
 import {mapActions, mapState} from "vuex";
 import {toMoney} from "../../../utils/utils";
-import TipoEntrega from "../../../enums/tipoEntrega";
 
 export default {
     name: "ListPedidos",
@@ -56,18 +55,11 @@ export default {
         selectPedido(pedido) {
             this.setPedidoSelected(pedido);
         },
-        tipoEntregaDisplay(tipoEntrega) {
-            if (tipoEntrega === TipoEntrega.Entrega.value) {
-                return TipoEntrega.Entrega.descricao;
-            } else {
-                return TipoEntrega.Retirada.descricao;
-            }
-        },
         toMoney(value) {
             return toMoney(value, true);
         },
         cardSelected(pedido) {
-            if (this.pedidoSelected.id_pedido === pedido.id_pedido)
+            if (this.pedidoSelected.idPedido === pedido.idPedido)
                 return "card-selected";
             else {
                 return "";

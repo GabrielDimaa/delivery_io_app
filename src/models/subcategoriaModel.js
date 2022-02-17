@@ -21,7 +21,7 @@ export default class SubcategoriaModel {
     }
 
     static fromJson(json) {
-        if (json === null) return null;
+        if (!json) return null;
 
         return new SubcategoriaModel(
             json.id_subcategoria,

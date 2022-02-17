@@ -37,7 +37,7 @@ export default class PedidoItemModel {
     }
 
     static fromJson(json) {
-        if (json === null) return null;
+        if (!json) return null;
 
         return new PedidoItemModel(
             json.id_pedido_item,

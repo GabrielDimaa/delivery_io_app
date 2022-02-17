@@ -2,23 +2,23 @@
     <v-card id="card-pedido" elevation="2">
         <div class="info-pedido">
             <div class="card-header flex">
-                <h3 id="title">Pedido #{{pedidoSelected.codigo_pedido}}</h3>
+                <h3 id="title">Pedido #{{pedidoSelected.codigoPedido}}</h3>
                 <div>
                     <v-icon class="mr-1" size="20" color="#FF3D00">mdi-clock-outline</v-icon>
-                    Horário do pedido: {{horarioPedidoDisplay}}
+                    Horário do pedido: {{pedidoSelected.horarioPedidoDisplay}}
                 </div>
             </div>
 
             <TileResumoPedido label="Entrega prevista:" value="20:32" icon="mdi-timer-outline"
                               color="var(--secondary-color)"/>
-            <TileResumoPedido label="Tipo de entrega:" :value="tipoEntregaDisplay" icon="mdi-moped"
+            <TileResumoPedido label="Tipo de entrega:" :value="pedidoSelected.tipoEntrega.descricao" icon="mdi-moped"
                               color="var(--primary-color)"/>
 
             <v-divider class="mt-3 mb-3"></v-divider>
 
             <TileResumoPedido label="Cliente:" :value="pedidoSelected.nome" icon="mdi-account" color="brown"/>
             <TileResumoPedido label="Telefone:" :value="formatarTelefone(pedidoSelected.telefone)" icon="mdi-phone-classic" color="#54C964"/>
-            <TileResumoPedido v-if="!isRetirada" label="Endereço:" :value="enderecoClienteDisplay"
+            <TileResumoPedido v-if="!isRetirada" label="Endereço:" :value="pedidoSelected.enderecoClienteDisplay"
                               icon="mdi-map-marker" color="red"/>
 
             <h4 class="mt-4">Itens</h4>
@@ -34,7 +34,7 @@
                             <div class="list-item-content">
                                 <div class="produto">{{item.descricao}}</div>
                                 <div class="preco-unitario-produto">{{qtdValorUnitarioItemDisplay(item)}}</div>
-                                <div class="valor-total-produto">{{toMoney(item.valor_total)}}</div>
+                                <div class="valor-total-produto">{{toMoney(item.valorTotal)}}</div>
                             </div>
                         </v-list-item-content>
                     </v-list-item>
@@ -58,34 +58,11 @@ import {formatterPhone, toMoney} from "../../../utils/utils";
 export default {
     name: "ResumoPedido",
     components: {TileResumoPedido},
-    data: () => ({
-        items: [
-            {
-                img: require('../../../assets/img/hamburguer.png'),
-                produto: "Hambúrguer duplo com queijo cheddar",
-                precoUnitario: "1UN x R$24,00",
-                valorTotal: "R$24,00"
-            },
-            {
-                img: require('../../../assets/img/coca.png'),
-                produto: "Coca cola lata",
-                precoUnitario: "2UN x R$4,50",
-                valorTotal: "R$9,00"
-            },
-        ],
-    }),
     computed: {
         ...mapState('pedidos', ['pedidoSelected']),
-        ...mapGetters('pedidos', ['itensPedido', 'enderecoClienteDisplay', 'horarioPedidoDisplay']),
+        ...mapGetters('pedidos', ['itensPedido']),
         isRetirada() {
-              return this.pedidoSelected.tipo_entrega === TipoEntrega.Retirada.value;
-        },
-        tipoEntregaDisplay() {
-            if (this.isRetirada) {
-                return TipoEntrega.Retirada.descricao;
-            } else {
-                return TipoEntrega.Entrega.descricao;
-            }
+              return this.pedidoSelected.tipoEntrega === TipoEntrega.Retirada;
         }
     },
     methods: {
@@ -96,7 +73,7 @@ export default {
             return formatterPhone(value);
         },
         qtdValorUnitarioItemDisplay(item) {
-            return `${item.quantidade}UN x ${this.toMoney(item.valor_unitario)}`;
+            return `${item.quantidade}UN x ${this.toMoney(item.valorUnitario)}`;
         }
     }
 }

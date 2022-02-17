@@ -20,7 +20,7 @@ export default class CategoriaModel {
     }
 
     static fromJson(json) {
-        if (json === null) return null;
+        if (!json) return null;
 
         return new CategoriaModel(
             json.id_categoria,

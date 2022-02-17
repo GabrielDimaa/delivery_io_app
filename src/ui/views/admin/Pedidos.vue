@@ -22,6 +22,7 @@ import ResumoPedido from "../../components/Pedidos/ResumoPedido";
 import LoadingDefault from "../../components/shared/LoadingDefault";
 import {api} from "../../../global";
 import {mapActions, mapGetters, mapState} from "vuex";
+import PedidoModel from "../../../models/pedidoModel";
 
 export default {
     name: "Pedidos",
@@ -32,16 +33,18 @@ export default {
         ...mapGetters('pedidos', ['pedidosEmpty'])
     },
     methods: {
-        ...mapActions('pedidos', ['setPedidoSelected', 'setPedidos', 'setLoading']),
+        ...mapActions('pedidos', ['setPedidoSelected', 'setPedidos', 'setLoading', 'resetFields']),
     },
     async created() {
         try {
+            this.resetFields();
             this.setLoading({show: true, text: "Buscando pedidos..."});
 
             const response = await api.get("pedidos");
 
             if (response.data.success) {
-                this.setPedidos(response.data.data.list);
+                const pedidos = response.data.data.list.map(it => PedidoModel.fromJson(it));
+                this.setPedidos(pedidos);
 
                 if (!this.pedidosEmpty) {
                     this.setPedidoSelected(this.pedidos[0]);

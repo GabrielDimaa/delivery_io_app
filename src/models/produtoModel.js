@@ -40,7 +40,7 @@ export default class ProdutoModel {
     }
 
     static fromJson(json) {
-        if (json === null) return null;
+        if (!json) return null;
 
         return new ProdutoModel(
             json.id_produto,

@@ -25,6 +25,8 @@ function formatterPhone(phone) {
 }
 
 function convertTZ(date) {
+    if (!date) return null;
+
     if (typeof date === "string") date = new Date(date);
     return new Date(date.toLocaleString("en-US", {timeZone: "America/Sao_Paulo"}));
 }

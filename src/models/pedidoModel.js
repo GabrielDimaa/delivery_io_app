@@ -21,8 +21,8 @@ export default class PedidoModel {
         tipoEntrega,
         status,
         observacao,
-        dataHoraCriado,
-        dataHoraFinalizado,
+        createdAt,
+        finalizadoAt,
         tempoEstimado,
         itens
     ) {
@@ -42,10 +42,18 @@ export default class PedidoModel {
         this.tipoEntrega = tipoEntrega;
         this.status = status;
         this.observacao = observacao;
-        this.dataHoraCriado = dataHoraCriado;
-        this.dataHoraFinalizado = dataHoraFinalizado;
+        this.createdAt = createdAt;
+        this.finalizadoAt = finalizadoAt;
         this.tempoEstimado = tempoEstimado;
         this.itens = itens;
+    }
+
+    get horarioPedidoDisplay() {
+        return `${this.createdAt.toTimeString().substring(0, 5)}`;
+    }
+
+    get enderecoClienteDisplay() {
+        return `${this.rua}, ${this.numero}, ${this.bairro}, ${this.complemento != null ? this.complemento + ", " : ""}${this.cidade}`;
     }
 
     toJson() {
@@ -72,7 +80,7 @@ export default class PedidoModel {
     }
 
     static fromJson(json) {
-        if (json === null) return null;
+        if (!json) return null;
 
         return new PedidoModel(
             json.id_pedido,
@@ -91,9 +99,9 @@ export default class PedidoModel {
             TipoEntrega.fromIndex(json.tipo_entrega),
             StatusPedido.fromIndex(json.status),
             json.observacao,
+            convertTZ(json.created_at),
             convertTZ(json.finalizado_at),
             json.tempo_estimado,
-            convertTZ(json.created_at),
             json.itens?.map(it => PedidoItemModel.fromJson(it)) ?? []
         );
     }
@@ -116,8 +124,8 @@ export default class PedidoModel {
             this.tipoEntrega,
             this.status,
             this.observacao,
-            this.dataHoraCriado,
-            this.dataHoraFinalizado,
+            this.createdAt,
+            this.finalizadoAt,
             this.tempoEstimado,
             this.itens
         );
