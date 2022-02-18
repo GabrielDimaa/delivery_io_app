@@ -6,6 +6,7 @@ export default {
     state: {
         pedidoSelected: null,
         pedidos: [],
+        filtroPedidos: StatusPedido.EmAberto,
         loading: {
             show: false,
             text: ""
@@ -59,6 +60,9 @@ export default {
         SET_PEDIDOS(state, payload) {
             state.pedidos = payload;
         },
+        SET_FILTRO_PEDIDOS(state, payload) {
+            state.filtroPedidos = payload;
+        },
         SET_LOADING(state, payload) {
             state.loading.show = payload.show;
             state.loading.text = payload.show ? payload.text : "";
@@ -74,6 +78,9 @@ export default {
         },
         setPedidos(context, payload) {
             context.commit("SET_PEDIDOS", payload);
+        },
+        setFiltroPedidos(context, payload) {
+            context.commit("SET_FILTRO_PEDIDOS", payload);
         },
         setLoading(context, payload) {
             context.commit("SET_LOADING", payload);

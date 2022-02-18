@@ -1,6 +1,8 @@
 <template>
     <div class="container-pedidos">
-        <div class="lista-pedidos">
+        <FiltroListPedidos/>
+
+        <div class="lista-pedidos mt-2">
             <div v-for="pedido in pedidos" :key="pedido.idPedido">
                 <v-card class="card-pedido-resumido mt-2" elevation="2" @click="selectPedido(pedido)" ripple>
                     <div class="d-flex card-body">
@@ -32,12 +34,13 @@
 import {mapActions, mapState} from "vuex";
 import {toMoney} from "../../../utils/utils";
 import TileStatusPedido from "./TileStatusPedido";
+import FiltroListPedidos from "./FiltroListPedidos";
 
 export default {
     name: "ListPedidos",
-    components: {TileStatusPedido},
+    components: {FiltroListPedidos, TileStatusPedido},
     computed: {
-        ...mapState('pedidos', ['pedidoSelected', 'pedidos', 'loading']),
+        ...mapState('pedidos', ['pedidoSelected', 'pedidos', 'loading'])
     },
     methods: {
         ...mapActions('pedidos', ['setPedidoSelected']),
@@ -64,7 +67,7 @@ export default {
 }
 
 .container-pedidos .lista-pedidos {
-    height: calc(100vh - var(--height-appbar) - (var(--padding-content) * 2));
+    height: calc(100vh - var(--height-appbar) - (var(--padding-content) * 2) - 42px);
     padding-right: 8px;
     overflow: auto;
 }
