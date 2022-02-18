@@ -2,22 +2,29 @@
     <v-card id="card-pedido" elevation="2">
         <div class="info-pedido">
             <div class="card-header flex">
-                <h3 id="title">Pedido #{{pedidoSelected.codigoPedido}}</h3>
+                <h3 id="title">Pedido #{{ pedidoSelected.codigoPedido }}</h3>
                 <div>
                     <v-icon class="mr-1" size="20" color="#FF3D00">mdi-clock-outline</v-icon>
-                    Horário do pedido: {{pedidoSelected.horarioPedidoDisplay}}
+                    Horário do pedido: {{ pedidoSelected.horarioPedidoDisplay }}
                 </div>
             </div>
 
-            <TileResumoPedido label="Entrega prevista:" value="20:32" icon="mdi-timer-outline"
-                              color="var(--secondary-color)"/>
-            <TileResumoPedido label="Tipo de entrega:" :value="pedidoSelected.tipoEntrega.descricao" icon="mdi-moped"
-                              color="var(--primary-color)"/>
+            <div class="flex justify-space-between">
+                <div>
+                    <TileResumoPedido label="Entrega prevista:" value="20:32" icon="mdi-timer-outline"
+                                      color="var(--secondary-color)"/>
+                    <TileResumoPedido label="Tipo de entrega:" :value="pedidoSelected.tipoEntrega.descricao"
+                                      icon="mdi-moped"
+                                      color="var(--primary-color)"/>
+                </div>
+                <TileStatusPedido :status="pedidoSelected.status"/>
+            </div>
 
             <v-divider class="mt-3 mb-3"></v-divider>
 
             <TileResumoPedido label="Cliente:" :value="pedidoSelected.nome" icon="mdi-account" color="brown"/>
-            <TileResumoPedido label="Telefone:" :value="formatarTelefone(pedidoSelected.telefone)" icon="mdi-phone-classic" color="#54C964"/>
+            <TileResumoPedido label="Telefone:" :value="formatarTelefone(pedidoSelected.telefone)"
+                              icon="mdi-phone-classic" color="#54C964"/>
             <TileResumoPedido v-if="!isRetirada" label="Endereço:" :value="pedidoSelected.enderecoClienteDisplay"
                               icon="mdi-map-marker" color="red"/>
 
@@ -32,9 +39,9 @@
 
                         <v-list-item-content>
                             <div class="list-item-content">
-                                <div class="produto">{{item.descricao}}</div>
-                                <div class="preco-unitario-produto">{{qtdValorUnitarioItemDisplay(item)}}</div>
-                                <div class="valor-total-produto">{{toMoney(item.valorTotal)}}</div>
+                                <div class="produto">{{ item.descricao }}</div>
+                                <div class="preco-unitario-produto">{{ qtdValorUnitarioItemDisplay(item) }}</div>
+                                <div class="valor-total-produto">{{ toMoney(item.valorTotal) }}</div>
                             </div>
                         </v-list-item-content>
                     </v-list-item>
@@ -43,12 +50,13 @@
         </div>
 
         <div class="buttons-pedido mt-3">
-            <v-btn v-if="!hideButtonCancelar" class="btn" outlined color="var(--error-color)" @click="cancelarPedido(pedidoSelected)">
+            <v-btn v-if="!hideButtonCancelar" class="btn" outlined color="var(--error-color)"
+                   @click="cancelarPedido(pedidoSelected)">
                 Cancelar
             </v-btn>
             <v-btn v-if="descricaoAcaoProximoStatus != null" class="btn white--text" style="font-weight: 400"
                    color="var(--primary-color)" @click="alterarStatus(pedidoSelected)">
-                {{descricaoAcaoProximoStatus}}
+                {{ descricaoAcaoProximoStatus }}
             </v-btn>
         </div>
     </v-card>
@@ -59,17 +67,18 @@ import TileResumoPedido from "./TileResumoPedido";
 import TipoEntrega from "../../../enums/tipoEntrega";
 import {mapActions, mapGetters, mapState} from "vuex";
 import {convertTZ, formatterPhone, toMoney} from "../../../utils/utils";
-import {api, showError, showSuccess} from "../../../global";
+import {api, showError} from "../../../global";
 import StatusPedido from "../../../enums/statusPedido";
+import TileStatusPedido from "./TileStatusPedido";
 
 export default {
     name: "ResumoPedido",
-    components: {TileResumoPedido},
+    components: {TileStatusPedido, TileResumoPedido},
     computed: {
         ...mapState('pedidos', ['pedidoSelected']),
         ...mapGetters('pedidos', ['itensPedido', 'proximoStatus', 'descricaoAcaoProximoStatus', 'hideButtonCancelar']),
         isRetirada() {
-              return this.pedidoSelected.tipoEntrega === TipoEntrega.Retirada;
+            return this.pedidoSelected.tipoEntrega === TipoEntrega.Retirada;
         }
     },
     methods: {
@@ -99,7 +108,6 @@ export default {
                 }
 
                 pedido.status = StatusPedido.fromIndex(response.data.data.status);
-                showSuccess();
             } catch (err) {
                 showError(err);
             } finally {
@@ -118,7 +126,6 @@ export default {
 
                 pedido.status = StatusPedido.fromIndex(response.data.data.status);
                 pedido.canceladoAt = convertTZ(response.data.data.cancelado_at);
-                showSuccess();
             } catch (err) {
                 showError(err);
             } finally {

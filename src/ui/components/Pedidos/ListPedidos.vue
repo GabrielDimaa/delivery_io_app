@@ -2,36 +2,23 @@
     <div class="container-pedidos">
         <div class="lista-pedidos">
             <div v-for="pedido in pedidos" :key="pedido.idPedido">
-                <v-card height="126" class="card-pedido-resumido mt-2" elevation="2" @click="selectPedido(pedido)" ripple>
+                <v-card class="card-pedido-resumido mt-2" elevation="2" @click="selectPedido(pedido)" ripple>
                     <div class="d-flex card-body">
                         <div class="card-barra" :class="{'card-selected': cardSelected(pedido)}"></div>
 
                         <div class="card-content">
-                            <div class="card-header">
-                                <span class="codigo-pedido">#{{pedido.codigoPedido}}</span>
-                                <small class="hora-pedido">{{pedido.horarioPedidoDisplay}}</small>
+                            <div class="d-flex justify-space-between align-center">
+                                <span class="codigo-pedido">#{{ pedido.codigoPedido }}</span>
+                                <TileStatusPedido :status="pedido.status" small/>
                             </div>
 
-                            <div class="text-info">{{pedido.nome}}</div>
-
-                            <div class="flex-entrega-valor-total">
-                                <div class="entrega-info">
-                                    <div class="previsao-entrega mt-1">
-                                        <v-icon size="16" color="#FF3D00">mdi-timer-outline</v-icon>
-                                        <div class="text-info ml-1">Previsão: 21:06</div>
-                                    </div>
-
-                                    <div class="tipo-entrega mt-1">
-                                        <v-icon size="16" color="var(--primary-color)">mdi-store</v-icon>
-                                        <div class="text-info ml-1">{{ pedido.tipoEntrega.descricao }}</div>
-                                    </div>
+                            <div class="d-flex justify-space-between align-center mt-1">
+                                <div>
+                                    <v-icon class="mr-1" size="16" color="#FF3D00">mdi-clock-outline</v-icon>
+                                    <small class="hora-pedido">{{ pedido.horarioPedidoDisplay }}</small>
                                 </div>
 
-                                <div class="valor-total mt-1">{{toMoney(pedido.valorTotal)}}</div>
-                            </div>
-
-                            <div class="flex-btn">
-                                <v-btn class="btn-aceitar" text color="#0BB865">Aceitar</v-btn>
+                                <div class="valor-total">{{ toMoney(pedido.valorTotal) }}</div>
                             </div>
                         </div>
                     </div>
@@ -44,9 +31,11 @@
 <script>
 import {mapActions, mapState} from "vuex";
 import {toMoney} from "../../../utils/utils";
+import TileStatusPedido from "./TileStatusPedido";
 
 export default {
     name: "ListPedidos",
+    components: {TileStatusPedido},
     computed: {
         ...mapState('pedidos', ['pedidoSelected', 'pedidos', 'loading']),
     },
@@ -88,7 +77,7 @@ export default {
 
 .container-pedidos .card-barra {
     width: 5px;
-    margin: 10px 0;
+    margin: 8px 0;
     border-radius: 12px;
     background: transparent;
 }
@@ -109,63 +98,17 @@ export default {
     flex-direction: column;
 }
 
-.card-pedido-resumido .card-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.card-pedido-resumido .card-header .codigo-pedido {
+.card-content .codigo-pedido {
     font-size: 15px;
     font-weight: 600;
 }
 
-.card-pedido-resumido .card-header .hora-pedido {
+.card-content .hora-pedido {
     font-weight: 500;
 }
 
-.card-pedido-resumido .text-info {
-    font-size: 12px;
-    font-weight: 500;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    color: var(--grey-color);
-}
-
-.card-pedido-resumido .flex-entrega-valor-total {
-    display: flex;
-    justify-content: space-between;
-}
-
-.card-pedido-resumido .entrega-info {
-    display: flex;
-    flex-direction: column;
-}
-
-.card-pedido-resumido .entrega-info .previsao-entrega,
-.card-pedido-resumido .entrega-info .tipo-entrega {
-    display: flex;
-}
-
-.card-pedido-resumido .flex-entrega-valor-total .valor-total {
+.card-pedido-resumido .valor-total {
     font-size: 15px;
     font-weight: 700;
-}
-
-.card-pedido-resumido .flex-btn {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-    justify-content: flex-end;
-    align-items: flex-end;
-}
-
-.card-pedido-resumido .flex-btn .btn-aceitar {
-    text-transform: none;
-    height: 16px;
-    width: 16px;
-    font-size: 14px;
-    alignment: right;
 }
 </style>
