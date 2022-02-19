@@ -147,7 +147,6 @@ export default {
     flex-direction: column;
     border-radius: 16px;
     padding: 24px;
-    height: calc(100vh - var(--height-appbar) - (var(--padding-content) * 2));
 }
 
 #card-pedido .info-pedido {

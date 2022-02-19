@@ -6,8 +6,10 @@
             </v-flex>
 
             <v-flex grow class="flex-pedido pl-8" xs12 md9>
-                <ResumoPedido v-if="!pedidosEmpty"/>
-                <h2 v-else>Nenhum pedido</h2>
+                <ResumoPedido class="height-max" v-if="!pedidosEmpty"/>
+                <div class="height-max d-flex column align-center justify-start" v-else>
+                    <NenhumDadoEncontrado text="Nenhum pedido encontrado."/>
+                </div>
             </v-flex>
         </v-layout>
 
@@ -22,10 +24,11 @@ import LoadingDefault from "../../components/shared/LoadingDefault";
 import {api} from "../../../global";
 import {mapActions, mapGetters, mapState} from "vuex";
 import PedidoModel from "../../../models/pedidoModel";
+import NenhumDadoEncontrado from "../../components/shared/NenhumDadoEncontrado";
 
 export default {
     name: "Pedidos",
-    components: {LoadingDefault, ListPedidos, ResumoPedido},
+    components: {NenhumDadoEncontrado, LoadingDefault, ListPedidos, ResumoPedido},
     data: () => ({}),
     computed: {
         ...mapState('pedidos', ['pedidoSelected', 'pedidos', 'loading', 'filtroPedidos']),
@@ -63,5 +66,9 @@ export default {
 .pedidos .flex-lista-pedidos,
 .pedidos .flex-pedido {
     height: 100%;
+}
+
+.pedidos .height-max {
+    height: calc(100vh - var(--height-appbar) - (var(--padding-content) * 2));
 }
 </style>
