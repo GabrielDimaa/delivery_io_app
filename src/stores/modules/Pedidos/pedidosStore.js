@@ -6,7 +6,7 @@ export default {
     state: {
         pedidoSelected: null,
         pedidos: [],
-        filtroPedidos: StatusPedido.EmAberto,
+        filtroPedidos: null,
         loading: {
             show: false,
             text: ""
@@ -70,6 +70,7 @@ export default {
         RESET_FIELDS(state) {
             state.pedidoSelected = null;
             state.pedidos = [];
+            state.filtroPedidos = null;
         }
     },
     actions: {

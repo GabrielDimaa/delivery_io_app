@@ -1,18 +1,20 @@
 <template>
     <div class="d-flex filtro-list-pedido">
         <v-card class="card-filtro mr-4" height="34" width="100%" elevation="2">
-            <v-btn class="btn-card-filtro" elevation="0" height="100%" @click="filtrar(novos)"
-                   :color="isFiltroSelected(novos) ? 'var(--primary-color)' : 'white'" :dark="isFiltroSelected(novos)">
-                Novos
+            <v-btn class="btn-card-filtro" elevation="0" height="100%" @click="filtrar(null)"
+                   :color="isFiltroSelected(null) ? 'var(--primary-color)' : 'white'" :dark="isFiltroSelected(null)">
+                Todos
             </v-btn>
 
             <v-btn class="btn-card-filtro" elevation="0" height="100%" @click="filtrar(aceitos)"
-                   :color="isFiltroSelected(aceitos) ? 'var(--primary-color)' : 'white'" :dark="isFiltroSelected(aceitos)">
+                   :color="isFiltroSelected(aceitos) ? 'var(--primary-color)' : 'white'"
+                   :dark="isFiltroSelected(aceitos)">
                 Aceitos
             </v-btn>
 
             <v-btn class="btn-card-filtro" elevation="0" height="100%" @click="filtrar(finalizados)"
-                   :color="isFiltroSelected(finalizados) ? 'var(--primary-color)' : 'white'" :dark="isFiltroSelected(finalizados)">
+                   :color="isFiltroSelected(finalizados) ? 'var(--primary-color)' : 'white'"
+                   :dark="isFiltroSelected(finalizados)">
                 Finaliz.
             </v-btn>
         </v-card>
@@ -22,14 +24,15 @@
 <script>
 import StatusPedido from "../../../enums/statusPedido";
 import {mapActions, mapState} from "vuex/dist/vuex.esm.browser";
+import {api} from "../../../global";
+import PedidoModel from "../../../models/pedidoModel";
+import {mapGetters} from "vuex";
 
 export default {
     name: "FiltroListPedidos",
     computed: {
-        ...mapState('pedidos', ['filtroPedidos']),
-        novos() {
-            return StatusPedido.EmAberto;
-        },
+        ...mapState('pedidos', ['filtroPedidos', 'pedidos']),
+        ...mapGetters('pedidos', ['pedidosEmpty']),
         aceitos() {
             return StatusPedido.Aceito;
         },
@@ -38,12 +41,34 @@ export default {
         }
     },
     methods: {
-        ...mapActions('pedidos', ['setFiltroPedidos']),
+        ...mapActions('pedidos', ['setFiltroPedidos', 'setLoading', 'setPedidos', 'setPedidoSelected']),
         isFiltroSelected(filtro) {
             return filtro === this.filtroPedidos;
         },
         async filtrar(status) {
-            this.setFiltroPedidos(status);
+            try {
+                const statusOld = this.filtroPedidos;
+
+                this.setLoading({show: true, text: "Buscando pedidos..."});
+                this.setFiltroPedidos(status);
+
+                const data = {"status": status?.value};
+
+                const response = await api.get("pedidos", {params: data});
+
+                if (response.data.success) {
+                    const pedidos = response.data.data.list.map(it => PedidoModel.fromJson(it));
+                    this.setPedidos(pedidos);
+
+                    if (!this.pedidosEmpty) {
+                        this.setPedidoSelected(this.pedidos[0]);
+                    }
+                } else {
+                    this.setFiltroPedidos(statusOld);
+                }
+            } finally {
+                this.setLoading(false)
+            }
         }
     }
 }

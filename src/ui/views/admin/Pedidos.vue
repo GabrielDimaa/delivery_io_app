@@ -1,16 +1,15 @@
 <template>
     <div>
-        <v-layout v-if="!pedidosEmpty" wrap class="pedidos">
+        <v-layout wrap class="pedidos">
             <v-flex class="flex-lista-pedidos" xs12 md3>
                 <ListPedidos/>
             </v-flex>
 
             <v-flex grow class="flex-pedido pl-8" xs12 md9>
-                <ResumoPedido/>
+                <ResumoPedido v-if="!pedidosEmpty"/>
+                <h2 v-else>Nenhum pedido</h2>
             </v-flex>
         </v-layout>
-
-        <h2 v-else>Nenhum pedido</h2>
 
         <LoadingDefault :loading="loading.show" :message="loading.text"/>
     </div>
@@ -29,7 +28,7 @@ export default {
     components: {LoadingDefault, ListPedidos, ResumoPedido},
     data: () => ({}),
     computed: {
-        ...mapState('pedidos', ['pedidoSelected', 'pedidos', 'loading']),
+        ...mapState('pedidos', ['pedidoSelected', 'pedidos', 'loading', 'filtroPedidos']),
         ...mapGetters('pedidos', ['pedidosEmpty'])
     },
     methods: {
