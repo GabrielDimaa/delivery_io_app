@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import pedidosStore from './modules/Pedidos/pedidosStore';
+import pedidosStore from './modules/pedidosStore';
 
 Vue.use(Vuex);
 

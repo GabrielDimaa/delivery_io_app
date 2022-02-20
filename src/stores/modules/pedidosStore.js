@@ -1,5 +1,5 @@
-import StatusPedido from "../../../enums/statusPedido";
-import TipoEntrega from "../../../enums/tipoEntrega";
+import StatusPedido from "../../enums/statusPedido";
+import TipoEntrega from "../../enums/tipoEntrega";
 
 export default {
     namespaced: true,
