@@ -33,7 +33,7 @@ export default class CategoriaModel {
         return new CategoriaModel(
             this.idCategoria,
             this.descricao,
-            this.subcategorias
+            this.subcategorias.map(it => it.clone())
         );
     }
 }

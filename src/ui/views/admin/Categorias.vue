@@ -4,7 +4,7 @@
             <DialogDefault ref="dialog" text-btn-confirm="Salvar" :title="titleForm"
                            :loading="loadingForm" :click-confirm="save">
                 <template v-slot:activator="{on, attrs}">
-                    <v-btn class="btn" color="var(--primary-color)" @click="resetFields"  v-on="on" :attrs="attrs">
+                    <v-btn class="btn" color="var(--primary-color)" @click="_resetFields"  v-on="on" :attrs="attrs">
                         Cadastrar
                     </v-btn>
                 </template>
@@ -63,10 +63,9 @@
         <ListagemCategorias v-if="!hideDataTable" :onClickUpdate="(e) => clickUpdateCategoria(e)" :onClickDelete="(e) => clickDeleteCategoria(e)" :data-table="categorias"/>
         <span v-else>Nenhuma categoria cadastrada.</span>
 
-        <LoadingDefault :loading="loading" :message="textLoading"/>
+        <LoadingDefault :loading="loading.show" :message="loading.text"/>
         <ConfirmDialog ref="confirmDialog"/>
-        <SubcategoriaDialog :loading="loadingForm" :subcategoria="subcategoria" ref="subcategoriaDialog"
-                            :click-confirm="clickConfirmSubcategoria" :click-cancel="clickCancelSubcategoria"/>
+        <SubcategoriaDialog ref="subcategoriaDialog"/>
     </v-container>
 </template>
 
@@ -80,6 +79,7 @@ import DialogDefault from "../../components/shared/DialogDefault";
 import LoadingDefault from "../../components/shared/LoadingDefault";
 import ConfirmDialog from "../../components/shared/ConfirmDialog";
 import SubcategoriaDialog from "../../components/Categorias/SubcategoriaDialog";
+import {mapActions, mapGetters, mapState} from "vuex";
 import CategoriaModel from "../../../models/categoriaModel";
 
 export default {
@@ -93,54 +93,23 @@ export default {
         ValidationProvider,
         ValidationObserver,
     },
-    data: () => ({
-        categoria: new CategoriaModel(),
-        subcategoria: {"descricao":  ""},
-        subcategoriaSelected: {},
-        categorias: [],
-        subcategorias: [],
-        loading: false,
-        textLoading: "",
-        loadingForm: false,
-    }),
     computed: {
-        hideDataTable() {
-            return this.categorias.length === 0;
-        },
-        titleForm() {
-            if (this.categoria.id_categoria) return "Alterar categoria";
-            else return "Cadastrar categoria";
-        }
+        ...mapState('categorias', ['categoria', 'categorias', 'subcategoria', 'subcategorias', 'loading', 'loadingForm']),
+        ...mapGetters('categorias', ['titleForm', 'hideDataTable']),
     },
     methods: {
-        setLoading(value, msg) {
-            if (!value) {
-                this.textLoading = "";
-            } else {
-                this.textLoading = msg;
-            }
-
-            this.loading = value;
-        },
-        setLoadingForm(value) {
-            this.loadingForm = value;
-        },
-        resetFields() {
+        ...mapActions('categorias', [
+            'setCategoria',
+            'setCategorias',
+            'setSubcategoria',
+            'setSubcategorias',
+            'resetFields',
+            'setLoading',
+            'setLoadingForm'
+        ]),
+        _resetFields() {
             if (this.$refs.formCategorias) this.$refs.formCategorias.reset();
-            this.categoria = {};
-            this.subcategorias = [];
-        },
-        resetSubcategoria() {
-            this.subcategoria = {"descricao":  ""};
-            this.subcategoriaSelected = {};
-        },
-        adicionarSubcategoriaNaLista(subcategoria) {
-            this.subcategorias.push({
-                "id_subcategoria": null,
-                "id_categoria": subcategoria.id_categoria,
-                "descricao": subcategoria.descricao,
-                "deleted": false,
-            });
+            this.resetFields();
         },
         async save() {
             try {
@@ -149,14 +118,12 @@ export default {
                 const validate = await this.$refs.formCategorias.validate();
 
                 if (validate) {
-                    const postPut = this.categoria.id_categoria ? 'put' : 'post';
-                    const id = this.categoria.id_categoria ? `/${this.categoria.id_categoria}` : "";
+                    const postPut = this.categoria.idCategoria ? 'put' : 'post';
+                    const id = this.categoria.idCategoria ? `/${this.categoria.idCategoria}` : "";
 
-                    const data = {
-                        "id_categoria": this.categoria.id_categoria,
-                        "descricao": this.categoria.descricao,
-                        "subcategorias": this.subcategorias
-                    };
+                    this.categoria.subcategorias = this.subcategorias;
+
+                    const data = this.categoria.toJson();
 
                     const response = await api[postPut](`categorias${id}`, data);
 
@@ -164,19 +131,19 @@ export default {
                         showError("Houve um erro ao concluir a operação!");
                     }
 
-                    const categoriaResponse = response.data.data;
+                    const categoriaModelResponse = CategoriaModel.fromJson(response.data.data);
 
-                    if (this.categoria.id_categoria) {
-                        const categoriasFilter = this.categorias.filter(e => e.id_categoria !== categoriaResponse.id_categoria);
-                        categoriasFilter.push(categoriaResponse);
-                        this.categorias = categoriasFilter;
+                    if (this.categoria.idCategoria) {
+                        const categoriasFilter = this.categorias.filter(e => e.idCategoria !== categoriaModelResponse.idCategoria);
+                        categoriasFilter.push(categoriaModelResponse);
+                        this.setCategorias(categoriasFilter);
                     } else {
-                        this.categorias.unshift(categoriaResponse)
+                        this.categorias.unshift(categoriaModelResponse)
                     }
 
                     this.categorias.sort(sort);
                     this.$refs.dialog.setDialog(false);
-                    this.resetFields();
+                    this._resetFields();
                     showSuccess();
                 }
             } catch (err) {
@@ -185,17 +152,18 @@ export default {
                 this.setLoadingForm(false);
             }
         },
-        async remove() {
+        async remove(categoria) {
             try {
-                this.setLoading(true, "Excluindo categoria...");
+                this.setLoading({show: true, text: "Excluindo categoria..."});
 
-                const response = await api.delete(`categorias/${this.categoria.id_categoria}`);
+                const response = await api.delete(`categorias/${categoria.idCategoria}`);
 
                 if (!response.data.success) {
                     showError("Houve um erro ao excluir a categoria!");
                 }
 
-                this.categorias = this.categorias.filter(e => e.id_categoria !== this.categoria.id_categoria);
+                const categorias = this.categorias.filter(e => e.idCategoria !== categoria.idCategoria);
+                this.setCategorias(categorias);
                 this.resetFields();
                 showSuccess();
             }  catch (err) {
@@ -205,14 +173,10 @@ export default {
             }
         },
         clickUpdateCategoria(categoria) {
-            this.resetFields();
+            this._resetFields();
 
-            this.categoria = {...categoria};
-            categoria.subcategorias.forEach(e => {
-                const sub = {...e};
-                this.$set(sub, "deleted", false)
-                this.subcategorias.push(sub);
-            });
+            this.setCategoria(categoria.clone());
+            this.setSubcategorias(this.categoria.subcategorias);
 
             this.$refs.dialog.setDialog(true);
         },
@@ -220,41 +184,14 @@ export default {
             const confirm = await this.$refs.confirmDialog.showDialog("Excluir", "Deseja excluir a categoria?");
 
             if (confirm) {
-                this.categoria = categoria;
-                await this.remove();
+                await this.remove(categoria);
             }
         },
         openDialogSubcategoria(subcategoria) {
             if (subcategoria !== null) {
-                this.subcategoria = {...subcategoria};
-                this.subcategoriaSelected = subcategoria;
+                this.setSubcategoria(subcategoria);
             }
             this.$refs.subcategoriaDialog.setDialog(true);
-        },
-        async clickConfirmSubcategoria(subcategoria) {
-            try {
-                this.setLoadingForm(true);
-
-                const validate = await this.$refs.subcategoriaDialog.$refs.formSubcategorias.validate();
-
-                if (validate) {
-                    if (subcategoria.id_subcategoria !== undefined) {
-                        this.subcategoriaSelected.descricao = subcategoria.descricao;
-                    } else {
-                        subcategoria.id_categoria = this.categoria.id_categoria;
-                        this.adicionarSubcategoriaNaLista(subcategoria);
-                    }
-
-                    this.$refs.subcategoriaDialog.setDialog(false);
-                    this.resetSubcategoria();
-                }
-            } finally {
-                this.setLoadingForm(false);
-            }
-        },
-        clickCancelSubcategoria() {
-            this.$refs.subcategoriaDialog.setDialog(false);
-            this.resetSubcategoria();
         },
         deleteSubcategoria(subcategoria) {
             subcategoria.deleted = true;
@@ -262,13 +199,15 @@ export default {
     },
     async created() {
         try {
-            this.setLoading(true, "Buscando categorias...");
+            this.setLoading({show: true, text: "Buscando categorias..."});
 
             const response = await api.get("categorias");
 
             if (response.data.success) {
-                this.categorias = response.data.data.list;
-                this.categorias.sort(sort);
+                let categorias = response.data.data.list;
+                categorias = categorias.map(it => CategoriaModel.fromJson(it));
+                categorias.sort(sort);
+                this.setCategorias(categorias);
             }
         } finally {
             this.setLoading(false);

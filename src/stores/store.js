@@ -2,13 +2,15 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import pedidosStore from './modules/pedidosStore';
 import produtosStore from './modules/produtosStore';
+import categoriasStore from './modules/categoriasStore';
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
     modules: {
         pedidos: pedidosStore,
-        produtos: produtosStore
+        produtos: produtosStore,
+        categorias: categoriasStore
     },
     state: {
         drawer: true

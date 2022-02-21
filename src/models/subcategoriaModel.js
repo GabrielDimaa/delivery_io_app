@@ -1,9 +1,9 @@
 export default class SubcategoriaModel {
     constructor(
-        idSubcategoria,
-        descricao,
-        idCategoria,
-        deleted
+        idSubcategoria = null,
+        descricao = null,
+        idCategoria = null,
+        deleted = false
     ) {
         this.idSubcategoria = idSubcategoria;
         this.descricao = descricao;

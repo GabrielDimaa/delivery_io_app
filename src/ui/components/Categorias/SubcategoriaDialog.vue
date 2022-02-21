@@ -11,7 +11,7 @@
                                 <v-flex>
                                     <validation-provider v-slot="{errors}" name="Descrição" rules="required">
                                         <v-text-field
-                                            v-model="subcategoria.descricao" :disabled="loading"
+                                            v-model="subcategoriaNew.descricao" :disabled="loadingForm"
                                             :error-messages="errors" label="Descrição" autofocus required outlined>
                                         </v-text-field>
                                     </validation-provider>
@@ -24,10 +24,10 @@
 
             <v-card-actions>
                 <v-spacer/>
-                <v-btn class="mr-3" color="primary" :disabled="loading" text @click="clickCancel">
+                <v-btn class="mr-3" color="primary" :disabled="loadingForm" text @click="cancelar">
                     Cancelar
                 </v-btn>
-                <v-btn color="primary" :disabled="loading" :loading="loading" @click="clickConfirm(subcategoria)">
+                <v-btn color="primary" :disabled="loadingForm" :loading="loadingForm" @click="confirm">
                     Confirmar
                 </v-btn>
             </v-card-actions>
@@ -37,38 +37,61 @@
 
 <script>
 import {ValidationObserver, ValidationProvider} from 'vee-validate';
+import {mapActions, mapState} from "vuex";
+import SubcategoriaModel from "../../../models/subcategoriaModel";
+import {sort} from "../../../utils/utils";
 
 export default {
     name: "SubcategoriaDialog",
     components: {ValidationObserver, ValidationProvider},
-    props: {
-        loading: {
-            type: Boolean,
-            default: false
-        },
-        clickConfirm: {
-            type: Function,
-            required: true
-        },
-        clickCancel: {
-            type: Function,
-            required: true
-        },
-        subcategoria: {
-            type: Object,
-            required: true
-        }
-    },
     data: () => ({
         dialog: false,
+        subcategoriaNew: new SubcategoriaModel()
     }),
+    computed: {
+        ...mapState('categorias', ['subcategoria', 'subcategorias', 'categoria', 'loadingForm'])
+    },
     methods: {
+        ...mapActions('categorias', ['setSubcategoria', 'setSubcategorias', 'setLoadingForm']),
         setDialog(value) {
             this.dialog = value;
 
-            //Se fechar o dialog limpa os campos.
-            if (!value) {
+            if (value) {
+                this.subcategoriaNew = this.subcategoria.clone();
+            } else {
                 this.$refs.formSubcategorias.reset();
+                this.subcategoriaNew = new SubcategoriaModel();
+            }
+        },
+        cancelar() {
+            this.setDialog(false);
+
+            this.setSubcategoria(new SubcategoriaModel());
+        },
+        async confirm() {
+            try {
+                this.setLoadingForm(true);
+
+                const validate = await this.$refs.formSubcategorias.validate();
+
+                this.setSubcategoria(this.subcategoriaNew);
+
+                if (validate) {
+                    if (this.subcategoria.idSubcategoria) {
+                        const subcategorias = this.subcategorias.filter(e => e.idSubcategoria !== this.subcategoria.idSubcategoria);
+                        subcategorias.push(this.subcategoria);
+                        this.setSubcategorias(subcategorias);
+                    } else {
+                        this.subcategoria.idCategoria = this.categoria.idCategoria;
+                        this.subcategorias.push(this.subcategoria);
+                    }
+
+                    this.subcategorias.sort(sort);
+                    this.setSubcategoria(new SubcategoriaModel());
+                    this.setDialog(false);
+                }
+            } finally {
+                this.setLoadingForm(false);
             }
         }
     }

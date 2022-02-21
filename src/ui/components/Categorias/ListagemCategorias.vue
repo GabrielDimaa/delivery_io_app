@@ -70,32 +70,7 @@ export default {
             "options": {
                 itemsPerPage: 5,
             },
-        },
-        // dataTable: [
-        //     {
-        //         descricao: "Bebidas",
-        //         subcategorias: [
-        //             {descricao: "Refrigerante"},
-        //             {descricao: "Suco"},
-        //             {descricao: "Cerveja"}
-        //         ],
-        //     },
-        //     {
-        //         descricao: "Lanches",
-        //         subcategorias: [
-        //             {descricao: "Pizza"},
-        //             {descricao: "Hamburger"},
-        //             {descricao: "Batata frita"}
-        //         ],
-        //     },
-        //     {
-        //         descricao: "Doces",
-        //         subcategorias: [
-        //             {descricao: "Brigadeiro"},
-        //             {descricao: "Beijinho"},
-        //         ],
-        //     },
-        // ],
+        }
     }),
 }
 </script>
