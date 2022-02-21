@@ -3,7 +3,7 @@
         <DialogDefault ref="dialog" text-btn-confirm="Salvar" :title="titleForm"
                        :loading="loadingForm" :click-confirm="save">
             <template v-slot:activator="{on, attrs}">
-                <v-btn class="btn" color="var(--primary-color)" @click="resetFields" v-on="on" :attrs="attrs">
+                <v-btn class="btn" color="var(--primary-color)" @click="_resetFields" v-on="on" :attrs="attrs">
                     Cadastrar
                 </v-btn>
             </template>
@@ -77,27 +77,30 @@
             </template>
         </DialogDefault>
 
-        <v-card v-for="prod in produtos" :key="prod.idProduto" width="260" class="card-produto mt-8 pa-4"
-                elevation="2">
-            <v-img src="@/assets/img/hamburguer.png" height="128" contain/>
+        <div v-if="!produtosEmpty">
+            <v-card v-for="prod in produtos" :key="prod.idProduto" width="260" class="card-produto mt-8 pa-4"
+                    elevation="2">
+                <v-img src="@/assets/img/hamburguer.png" height="128" contain/>
 
-            <h4 class="mt-4">{{ prod.descricao }}</h4>
-            <div class="preco">
-                {{ prod.categoria.descricao }} - {{ prod.subcategoria.descricao }}
-                <br>
-                <span class="preco">{{ toMoney(prod.preco) }}</span>
-            </div>
+                <h4 class="mt-4">{{ prod.descricao }}</h4>
+                <div class="preco">
+                    {{ prod.categoria.descricao }} - {{ prod.subcategoria.descricao }}
+                    <br>
+                    <span class="preco">{{ toMoney(prod.preco) }}</span>
+                </div>
 
-            <div class="d-flex flex-row-reverse">
-                <v-btn icon color="yellow" @click="openDialogUpdate(prod)">
-                    <v-icon size="20">mdi-pencil</v-icon>
-                </v-btn>
+                <div class="d-flex flex-row-reverse">
+                    <v-btn icon color="yellow" @click="openDialogUpdate(prod)">
+                        <v-icon size="20">mdi-pencil</v-icon>
+                    </v-btn>
 
-                <v-btn icon color="red" @click="remove(prod)">
-                    <v-icon size="20">mdi-delete</v-icon>
-                </v-btn>
-            </div>
-        </v-card>
+                    <v-btn icon color="red" @click="remove(prod)">
+                        <v-icon size="20">mdi-delete</v-icon>
+                    </v-btn>
+                </div>
+            </v-card>
+        </div>
+        <NenhumDadoEncontrado v-else text="Nenhum produto encontrado."/>
 
         <LoadingDefault :loading="loading.show" :message="loading.text"/>
         <ConfirmDialog ref="confirmDialog"></ConfirmDialog>
@@ -113,11 +116,13 @@ import ConfirmDialog from "../../components/shared/ConfirmDialog";
 import {ValidationObserver, ValidationProvider} from "vee-validate";
 import ProdutoModel from "../../../models/produtoModel";
 import CategoriaModel from "../../../models/categoriaModel";
-import SubcategoriaModel from "../../../models/subcategoriaModel";
+import {mapActions, mapGetters, mapState} from "vuex";
+import NenhumDadoEncontrado from "../../components/shared/NenhumDadoEncontrado";
 
 export default {
     name: "Produtos",
     components: {
+        NenhumDadoEncontrado,
         LoadingDefault,
         DialogDefault,
         ConfirmDialog,
@@ -125,17 +130,6 @@ export default {
         ValidationProvider,
     },
     data: () => ({
-        produto: new ProdutoModel(),
-        produtos: [],
-        categorias: [],
-        //categoria e subcategoria devem ser null, pq senão não será validado no form v-select
-        categoria: new CategoriaModel(),
-        subcategoria: new SubcategoriaModel(),
-        loading: {
-            show: false,
-            text: ""
-        },
-        loadingForm: false,
         options: {
             locale: "pt-BR",
             prefix: "R$",
@@ -145,36 +139,46 @@ export default {
         }
     }),
     computed: {
-        titleForm() {
-            return this.produto.idProduto ? "Alterar produto" : "Cadastrar produto";
+        ...mapState('produtos', ['produto', 'produtos', 'categorias', 'loading', 'loadingForm']),
+        ...mapGetters('produtos', ['subcategorias', 'titleForm', 'disableFieldSubcategoria', 'produtosEmpty']),
+        categoria: {
+            get() {
+                return this.$store.state.produtos.categoria;
+            },
+            set(value) {
+                this.$store.commit("produtos/SET_CATEGORIA", value);
+            }
         },
-        disableFieldSubcategoria() {
-            return this.loadingForm || !(this.categoria?.idCategoria ?? false);
-        },
-        subcategorias() {
-            return this.categoria?.subcategorias ?? [];
+        subcategoria: {
+            get() {
+                return this.$store.state.produtos.subcategoria;
+            },
+            set(value) {
+                this.$store.commit("produtos/SET_SUBCATEGORIA", value);
+            }
         }
     },
     methods: {
-        setLoading(show, msg = "") {
-            this.loading.show = show;
-            this.loading.text = show ? msg : "";
-        },
-        setLoadingForm(value) {
-            this.loadingForm = value;
-        },
+        ...mapActions('produtos', [
+            'setProduto',
+            'setProdutos',
+            'setCategoria',
+            'setCategorias',
+            'setSubcategoria',
+            'resetFields',
+            'setLoading',
+            'setLoadingForm'
+        ]),
         toMoney(value) {
             return toMoney(value, true);
         },
-        resetFields() {
+        _resetFields() {
             if (this.$refs.formProdutos) this.$refs.formProdutos.reset();
 
             const fieldPreco = document.getElementById("preco");
             if (fieldPreco != null) fieldPreco.value = "";
 
-            this.categoria = new CategoriaModel();
-            this.subcategoria = new SubcategoriaModel();
-            this.produto = new ProdutoModel();
+            this.resetFields();
         },
         async save() {
             try {
@@ -199,15 +203,14 @@ export default {
                         showError("Houve um erro ao concluir a operação!");
                     }
 
-                    const produtoResponse = ProdutoModel.fromJson(response.data.data);
+                    const produtoResponseModel = ProdutoModel.fromJson(response.data.data);
 
                     if (this.produto.idProduto) {
-                        const produtosFilter = this.produtos.filter(e => e.idProduto !== produtoResponse.idProduto);
-                        this.produto = produtoResponse;
-                        produtosFilter.push(this.produto);
-                        this.produtos = produtosFilter;
+                        const produtosFilter = this.produtos.filter(e => e.idProduto !== produtoResponseModel.idProduto);
+                        produtosFilter.push(produtoResponseModel);
+                        this.setProdutos(produtosFilter);
                     } else {
-                        this.produtos.push(produtoResponse)
+                        this.produtos.push(produtoResponseModel)
                     }
 
                     this.produtos.sort(sort);
@@ -226,7 +229,7 @@ export default {
                 const confirm = await this.$refs.confirmDialog.showDialog("Excluir", "Deseja excluir o produto?");
 
                 if (confirm) {
-                    this.setLoading(true, "Excluindo produto...");
+                    this.setLoading({show: true, text: "Excluindo produto..."});
 
                     const response = await api.delete(`produtos/${produto.idProduto}`);
 
@@ -234,7 +237,7 @@ export default {
                         showError("Houve um erro ao excluir o produto!");
                     }
 
-                    this.produtos = this.produtos.filter(e => e.idProduto !== produto.idProduto);
+                    this.setProdutos(this.produtos.filter(e => e.idProduto !== produto.idProduto));
                     this.resetFields();
                     showSuccess();
                 }
@@ -245,36 +248,38 @@ export default {
             }
         },
         openDialogUpdate(produto) {
-            this.resetFields();
+            this._resetFields();
 
-            this.produto = produto.clone();
+            const produtoClone = produto.clone();
             //Adiciona casas decimais pq senão o campo preço fica incorreto.
             //se o preço for 750, ficaria 7,50, com o toFixed() fica 750,00.
-            this.produto.preco = parseFloat(this.produto.preco).toFixed(2);
+            produtoClone.preco = parseFloat(produtoClone.preco).toFixed(2);
+            this.setProduto(produtoClone);
 
-            this.categoria = this.categorias.filter(e => e.idCategoria === produto.idCategoria)[0];
-            this.subcategoria = this.categoria.subcategorias.filter(e => e.idSubcategoria === produto.idSubcategoria)[0];
+            this.setCategoria(this.categorias.filter(e => e.idCategoria === produto.idCategoria)[0]);
+            this.setSubcategoria(this.categoria.subcategorias.filter(e => e.idSubcategoria === produto.idSubcategoria)[0]);
 
             this.$refs.dialog.setDialog(true);
         }
     },
     async created() {
         try {
-            this.setLoading(true, "Buscando produtos...");
+            this._resetFields();
+            this.setLoading({show: true, text: "Buscando produtos..."});
 
             const responseProd = await api.get("produtos");
             const responseCat = await api.get("categorias");
 
             if (responseProd.data.success) {
-                const produtos = responseProd.data.data.list;
-                this.produtos = produtos.map(it => ProdutoModel.fromJson(it));
-                this.produtos.sort(sort);
+                let produtos = responseProd.data.data.list;
+                produtos = produtos.map(it => ProdutoModel.fromJson(it));
+                this.setProdutos(produtos.sort(sort));
             }
 
             if (responseCat.data.success) {
-                const categorias = responseCat.data.data.list;
-                this.categorias = categorias.map(it => CategoriaModel.fromJson(it));
-                this.categorias.sort(sort);
+                let categorias = responseCat.data.data.list;
+                categorias = categorias.map(it => CategoriaModel.fromJson(it));
+                this.setCategorias(categorias.sort(sort));
             }
         } finally {
             this.setLoading(false);
