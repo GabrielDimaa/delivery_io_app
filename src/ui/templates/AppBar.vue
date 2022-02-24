@@ -1,17 +1,12 @@
 <template>
     <v-app-bar dense elevation="0" height="76" color="white" app>
-        <v-btn small rounded fab elevation="0" @click="CHANGE_DRAWER" color="var(--primary-color)" outlined>
+        <v-btn small rounded fab elevation="0" @click="changeDrawer" color="var(--primary-color)" outlined>
             <v-icon color="var(--primary-color)" :size="iconSize">mdi-menu</v-icon>
         </v-btn>
 
         <h1 class="ml-6">{{$route.name}}</h1>
 
         <v-spacer/>
-
-        <div id="notificacao">
-            <v-badge dot color="var(--error-color)"></v-badge>
-            <v-icon :size="iconSize" id="icon-notificacao">mdi-bell</v-icon>
-        </div>
 
         <div class="status-loja ml-8">
             <span id="descricao-status-loja">Aberto</span>
@@ -26,7 +21,7 @@
 </template>
 
 <script>
-import {mapMutations} from "vuex";
+import {mapActions} from "vuex";
 
 export default {
     name: "AppBar",
@@ -34,7 +29,7 @@ export default {
         iconSize: 20,
     }),
     methods: {
-        ...mapMutations(["CHANGE_DRAWER"])
+        ...mapActions(["changeDrawer"])
     }
 }
 </script>
@@ -55,16 +50,6 @@ h1 {
     font-size: 14px;
     font-weight: 500;
     color: var(--grey-color);
-}
-
-#notificacao {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-}
-
-#icon-notificacao {
-    color: var(--dark-color);
 }
 
 .status-loja {

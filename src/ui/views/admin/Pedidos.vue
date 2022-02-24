@@ -29,7 +29,6 @@ import NenhumDadoEncontrado from "../../components/shared/NenhumDadoEncontrado";
 export default {
     name: "Pedidos",
     components: {NenhumDadoEncontrado, LoadingDefault, ListPedidos, ResumoPedido},
-    data: () => ({}),
     computed: {
         ...mapState('pedidos', ['pedidoSelected', 'pedidos', 'loading', 'filtroPedidos']),
         ...mapGetters('pedidos', ['pedidosEmpty'])
