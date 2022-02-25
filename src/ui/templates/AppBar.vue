@@ -8,9 +8,9 @@
 
         <v-spacer/>
 
-        <div class="status-loja ml-8">
-            <span id="descricao-status-loja">Aberto</span>
-            <div id="cor-status-loja"></div>
+        <div class="status-loja">
+            <v-icon color="rgb(11, 192, 78)" class="mr-1" size="22">mdi-check-circle</v-icon>
+            Loja aberta
         </div>
 
         <div class="sair ml-8 pr-8 pl-8">
@@ -53,19 +53,10 @@ h1 {
 }
 
 .status-loja {
-    display: flex;
-    align-items: center;
-}
-
-.status-loja #descricao-status-loja {
+    border: 1px rgb(11, 192, 78) solid;
+    border-radius: 4px;
+    padding: 6px 18px;
+    color: rgb(11, 192, 78);
     font-weight: 500;
-    margin-right: 16px;
-}
-
-.status-loja #cor-status-loja {
-    border-radius:100%;
-    background: #0BB14E;
-    height: 14px;
-    width: 14px;
 }
 </style>
