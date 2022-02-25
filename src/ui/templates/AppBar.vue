@@ -9,7 +9,7 @@
         <v-spacer/>
 
         <div class="status-loja">
-            <v-icon color="rgb(11, 192, 78)" class="mr-1" size="22">mdi-check-circle</v-icon>
+            <v-icon color="rgb(11, 192, 78)" class="mr-1" size="12">mdi-circle</v-icon>
             Loja aberta
         </div>
 
@@ -53,9 +53,9 @@ h1 {
 }
 
 .status-loja {
-    border: 1px rgb(11, 192, 78) solid;
-    border-radius: 4px;
+    border-radius: 22px;
     padding: 6px 18px;
+    background: rgb(11, 192, 78, 0.2);
     color: rgb(11, 192, 78);
     font-weight: 500;
 }
