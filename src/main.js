@@ -14,9 +14,9 @@ Vue.config.productionTip = false;
 window.Pusher = require('pusher-js');
 
 window.Echo = new Echo({
-  broadcaster: 'pusher',
-  key: 'local',
-  wsHost: '127.0.0.1',
+  broadcaster: process.env.VUE_APP_WS_BROADCASTER,
+  key: process.env.VUE_APP_WS_KEY,
+  wsHost: process.env.VUE_APP_WS_HOST,
   wsPort: 6001,
   forceTLS: false
 });
