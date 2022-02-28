@@ -1,9 +1,4 @@
-import axios from 'axios';
 import Vue from 'vue';
-
-const api = axios.create({
-    baseURL: "http://localhost:8000/api/"
-});
 
 function showSuccess(msg) {
     Vue.toasted.global.showSuccess(msg);
@@ -19,4 +14,4 @@ function showError(error) {
     }
 }
 
-export {api, showSuccess, showError};
+export {showSuccess, showError};

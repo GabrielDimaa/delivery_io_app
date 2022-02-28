@@ -108,7 +108,7 @@
 </template>
 
 <script>
-import {api, showError, showSuccess} from "../../../global";
+import {showError, showSuccess} from "../../../global";
 import {extractNumber, sort, toMoney} from "../../../utils/utils";
 import LoadingDefault from "../../components/shared/LoadingDefault";
 import DialogDefault from "../../components/shared/DialogDefault";
@@ -118,6 +118,7 @@ import ProdutoModel from "../../../models/produtoModel";
 import CategoriaModel from "../../../models/categoriaModel";
 import {mapActions, mapGetters, mapState} from "vuex";
 import NenhumDadoEncontrado from "../../components/shared/NenhumDadoEncontrado";
+import api from "../../../services/api";
 
 export default {
     name: "Produtos",

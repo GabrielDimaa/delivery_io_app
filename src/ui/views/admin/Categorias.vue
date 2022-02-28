@@ -71,7 +71,7 @@
 
 <script>
 import '@/plugins/vee';
-import {api, showSuccess, showError} from '../../../global';
+import {showSuccess, showError} from '../../../global';
 import {ValidationObserver, ValidationProvider} from 'vee-validate';
 import {sort} from "../../../utils/utils";
 import ListagemCategorias from '../../components/Categorias/ListagemCategorias';
@@ -81,6 +81,7 @@ import ConfirmDialog from "../../components/shared/ConfirmDialog";
 import SubcategoriaDialog from "../../components/Categorias/SubcategoriaDialog";
 import {mapActions, mapGetters, mapState} from "vuex";
 import CategoriaModel from "../../../models/categoriaModel";
+import api from "../../../services/api";
 
 export default {
     name: "Categorias",

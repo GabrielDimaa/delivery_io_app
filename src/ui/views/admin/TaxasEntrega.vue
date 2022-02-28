@@ -50,12 +50,13 @@
 </template>
 
 <script>
-import {api, showError, showSuccess} from "../../../global";
+import {showError, showSuccess} from "../../../global";
 import {extractNumber, sort} from "../../../utils/utils";
 import '@/plugins/vee';
 import {ValidationObserver, ValidationProvider} from 'vee-validate';
 import DialogDefault from "../../components/shared/DialogDefault";
 import LoadingDefault from "../../components/shared/LoadingDefault";
+import api from "../../../services/api";
 
 export default {
     name: "TaxasEntrega",

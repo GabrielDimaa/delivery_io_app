@@ -21,10 +21,10 @@
 import ListPedidos from "../../components/Pedidos/ListPedidos";
 import ResumoPedido from "../../components/Pedidos/ResumoPedido";
 import LoadingDefault from "../../components/shared/LoadingDefault";
-import {api} from "../../../global";
 import {mapActions, mapGetters, mapState} from "vuex";
 import PedidoModel from "../../../models/pedidoModel";
 import NenhumDadoEncontrado from "../../components/shared/NenhumDadoEncontrado";
+import api from "../../../services/api";
 
 export default {
     name: "Pedidos",

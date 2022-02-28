@@ -24,9 +24,9 @@
 <script>
 import StatusPedido from "../../../enums/statusPedido";
 import {mapActions, mapState} from "vuex/dist/vuex.esm.browser";
-import {api} from "../../../global";
 import PedidoModel from "../../../models/pedidoModel";
 import {mapGetters} from "vuex";
+import api from "../../../services/api";
 
 export default {
     name: "FiltroListPedidos",

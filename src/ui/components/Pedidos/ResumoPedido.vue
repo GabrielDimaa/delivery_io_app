@@ -67,9 +67,10 @@ import TileResumoPedido from "./TileResumoPedido";
 import TipoEntrega from "../../../enums/tipoEntrega";
 import {mapActions, mapGetters, mapState} from "vuex";
 import {convertTZ, formatterPhone, toMoney} from "../../../utils/utils";
-import {api, showError} from "../../../global";
+import {showError} from "../../../global";
 import StatusPedido from "../../../enums/statusPedido";
 import TileStatusPedido from "./TileStatusPedido";
+import api from "../../../services/api";
 
 export default {
     name: "ResumoPedido",
