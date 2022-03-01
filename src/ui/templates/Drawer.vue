@@ -1,7 +1,7 @@
 <template>
     <v-navigation-drawer color="white" floating v-model="drawer" app>
             <div class="pa-4">
-                <router-link to="/">
+                <router-link to="/admin">
                     <v-img src="@/assets/img/logo.png" max-width="180"/>
                 </router-link>
             </div>
@@ -31,12 +31,12 @@ export default {
     data() {
         return {
             itensMenu: [
-                {text: "Dashboard", icon: "mdi-view-dashboard", route: "/"},
-                {text: "Pedidos", icon: "mdi-room-service", route: "/pedidos"},
-                {text: "Cardápio", icon: "mdi-book-open-variant", route: "/cardapio"},
-                {text: "Produtos", icon: "mdi-silverware", route: "/produtos"},
-                {text: "Categorias", icon: "mdi-shape", route: "/categorias"},
-                {text: "Taxas de entrega", icon: "mdi-moped", route: "/taxas-entrega"},
+                {text: "Dashboard", icon: "mdi-view-dashboard", route: "/admin/"},
+                {text: "Pedidos", icon: "mdi-room-service", route: "/admin/pedidos"},
+                {text: "Cardápio", icon: "mdi-book-open-variant", route: "/admin/cardapio"},
+                {text: "Produtos", icon: "mdi-silverware", route: "/admin/produtos"},
+                {text: "Categorias", icon: "mdi-shape", route: "/admin/categorias"},
+                {text: "Taxas de entrega", icon: "mdi-moped", route: "/admin/taxas-entrega"},
             ]
         }
     },
