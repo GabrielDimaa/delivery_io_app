@@ -3,6 +3,7 @@ import Vuex from 'vuex';
 import pedidosStore from './modules/pedidosStore';
 import produtosStore from './modules/produtosStore';
 import categoriasStore from './modules/categoriasStore';
+import loginStore from './modules/loginStore';
 
 Vue.use(Vuex);
 
@@ -10,7 +11,8 @@ export default new Vuex.Store({
     modules: {
         pedidos: pedidosStore,
         produtos: produtosStore,
-        categorias: categoriasStore
+        categorias: categoriasStore,
+        login: loginStore
     },
     state: {
         drawer: true,
