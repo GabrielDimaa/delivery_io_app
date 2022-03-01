@@ -1,6 +1,6 @@
 import axios from "axios";
 import refreshToken from "./refreshToken";
-import LocalStorageService from "./localStorage";
+import LocalStorageService from "./localStorageService";
 
 const _axiosDefault = axios.create({
     baseURL: process.env.VUE_APP_API_BASE_URL,
