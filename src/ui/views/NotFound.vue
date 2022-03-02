@@ -4,7 +4,7 @@
         <span>404</span>
         <h1>Página não encontrada</h1>
         <router-link to="/" id="link">
-            <v-btn class="btn" max-width="400" width="300" height="46" color="var(--primary-color)">
+            <v-btn class="btn" height="46" color="var(--primary-color)">
                 Ir para página inicial
                 <v-icon size="22" right dark>mdi-arrow-right</v-icon>
             </v-btn>
@@ -28,6 +28,10 @@ export default {
     width: 100vw;
 }
 
+#not-found h1 {
+    text-align: center;
+}
+
 #not-found span {
     font-size: 46px;
     font-weight: 400;
@@ -45,5 +49,6 @@ export default {
     font-size: 16px;
     font-weight: 600;
     margin-top: 12px;
+    padding: 0 40px;
 }
 </style>
