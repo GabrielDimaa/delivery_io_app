@@ -13,15 +13,16 @@
             Loja aberta
         </div>
 
-        <div class="sair ml-8 pr-8 pl-8">
+        <a href="" @click.prevent="fazerLogout" class="sair ml-8 pr-8 pl-8" v-ripple>
             <v-icon color="var(--grey-color)" :size="iconSize" class="icon-sair mr-4">mdi-logout</v-icon>
             <span id="text-sair">Sair</span>
-        </div>
+        </a>
     </v-app-bar>
 </template>
 
 <script>
 import {mapActions} from "vuex";
+import LocalStorageService from "../../services/localStorageService";
 
 export default {
     name: "AppBar",
@@ -29,7 +30,12 @@ export default {
         iconSize: 20,
     }),
     methods: {
-        ...mapActions(["changeDrawer"])
+        ...mapActions(['changeDrawer', 'setIsLogged']),
+        fazerLogout() {
+            LocalStorageService.clearAccessToken();
+            this.setIsLogged(false);
+            this.$router.replace("/admin/login");
+        }
     }
 }
 </script>
@@ -42,8 +48,14 @@ h1 {
 .sair {
     display: flex;
     align-items: center;
-    border-left: 2px solid #dadadc;
     height: 68%;
+    text-decoration: none;
+}
+
+
+.sair:hover {
+    background: var(--opacity-grey-color);
+    border-radius: 6px;
 }
 
 .sair #text-sair {

@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import Router from 'vue-router';
+import store from '../stores/store';
 import Admin from "../ui/views/admin/Admin";
 import Login from "../ui/views/admin/Login";
 import Home from "../ui/views/Home";
@@ -72,7 +73,16 @@ router.beforeEach((to, from, next) => {
     if (to.meta.requiresAuth) {
         const token = LocalStorageService.getAccessToken();
 
-        token ? next() : next({path: "*"});
+        if (token) {
+            if (store.state.isLogged) {
+                next()
+            } else {
+                LocalStorageService.clearAccessToken();
+                next({path: "/admin/login"})
+            }
+        } else {
+            next({path: "*"});
+        }
     } else {
         next();
     }
