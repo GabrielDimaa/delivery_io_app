@@ -16,7 +16,8 @@ export default new Vuex.Store({
     },
     state: {
         drawer: true,
-        showNotification: false
+        showNotification: false,
+        isLogged: false
     },
     mutations: {
         CHANGE_DRAWER(state) {
@@ -30,6 +31,9 @@ export default new Vuex.Store({
                     state.showNotification = false;
                 }, 5000);
             }
+        },
+        SET_IS_LOGGED(state, payload) {
+            state.isLogged = payload;
         }
     },
     actions: {
@@ -38,6 +42,9 @@ export default new Vuex.Store({
         },
         setShowNotification(context, payload) {
             context.commit("SET_SHOW_NOTIFICATION", payload);
+        },
+        setIsLogged(context, payload) {
+            context.commit("SET_IS_LOGGED", payload);
         }
     }
 })

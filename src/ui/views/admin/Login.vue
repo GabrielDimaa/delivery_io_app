@@ -4,32 +4,75 @@
             <h1 id="title">Olá, seja bem-vindo!</h1>
 
             <validation-observer style="width: 100%" ref="formLogin">
-                <v-form style="width: 100%" @submit.prevent="login">
+                <v-form style="width: 100%" @submit.prevent="fazerLogin">
                     <validation-provider v-slot="{errors}" name="Usuário" rules="required">
-                        <v-text-field dense label="Usuário" required outlined :error-messages="errors">
+                        <v-text-field
+                            dense label="Usuário" required outlined
+                            v-model="login.email" :disabled="loading" :error-messages="errors">
                         </v-text-field>
                     </validation-provider>
 
                     <validation-provider v-slot="{errors}" name="Senha" rules="required">
-                        <v-text-field dense label="Senha" type="password" required outlined :error-messages="errors">
+                        <v-text-field
+                            dense label="Senha" type="password" required outlined
+                            v-model="login.password" :disabled="loading" :error-messages="errors">
                         </v-text-field>
                     </validation-provider>
                 </v-form>
             </validation-observer>
 
-            <v-btn id="btn-entrar" @click="login">Entrar</v-btn>
+            <div id="loading">
+                <v-progress-linear v-show="loading" color="var(--opacity-primary-color)"
+                       background-color="var(--primary-color)" height="4" indeterminate>
+                </v-progress-linear>
+            </div>
+
+            <v-btn id="btn-entrar" @click="fazerLogin" :loading="loading" :disabled="loading">Entrar</v-btn>
         </v-card>
     </div>
 </template>
 
 <script>
 import {ValidationObserver, ValidationProvider} from "vee-validate";
+import {mapActions, mapState} from "vuex";
+import {showError} from "../../../global";
+import api from "../../../services/api";
+import LocalStorageService from "../../../services/localStorageService";
 
 export default {
     name: "Login",
     components: {ValidationProvider, ValidationObserver},
+    computed: {
+        ...mapState('login', ['login', 'loading']),
+    },
     methods: {
-        async login() {}
+        ...mapActions('login', ['setLoading', 'resetFields']),
+        ...mapActions(['setIsLogged']),
+        async fazerLogin() {
+            try {
+                this.setLoading(true);
+
+                const validate = await this.$refs.formLogin.validate();
+
+                if (validate) {
+                    const response = await api.post("auth/login", this.login.toJson());
+
+                    if (!response.data.access_token) {
+                        showError("Não foi possível realizar login!");
+                    }
+
+                    LocalStorageService.setAccessToken(response.data.access_token);
+                    this.resetFields();
+                    this.setIsLogged(true);
+
+                    await this.$router.replace("/admin/pedidos");
+                }
+            } catch (err) {
+                showError(err);
+            } finally {
+                this.setLoading(false);
+            }
+        }
     }
 }
 </script>
@@ -58,6 +101,14 @@ export default {
     margin-bottom: 40px;
 }
 
+#loading {
+    display: flex;
+    align-items: flex-end;
+    width: 100%;
+    height: 20px;
+    padding-bottom: 4px;
+}
+
 #btn-entrar {
     height: 50px;
     width: 100%;
@@ -67,6 +118,5 @@ export default {
     font-size: 16px;
     font-weight: 500;
     color: var(--background-color);
-    margin-top: 20px;
 }
 </style>

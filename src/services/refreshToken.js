@@ -1,7 +1,7 @@
 function refreshToken(instanceApi) {
     return instanceApi.post("/auth/refresh")
         .then(res => res.data.access_token)
-        .catch(err => err);
+        .catch(() => null);
 }
 
 export default refreshToken;

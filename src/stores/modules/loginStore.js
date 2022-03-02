@@ -1,13 +1,10 @@
-import ProdutoModel from "../../models/LoginModel";
+import LoginModel from "../../models/loginModel";
 
 export default {
     namespaced: true,
     state: {
         login: new LoginModel(),
-        loading: {
-            show: false,
-            text: ""
-        }
+        loading: false
     },
     mutations: {
         SET_LOGIN(state, payload) {
@@ -17,8 +14,7 @@ export default {
             state.login = new LoginModel();
         },
         SET_LOADING(state, payload) {
-            state.loading.show = (payload?.show ?? false);
-            state.loading.text = payload.show ? payload.text : "";
+            state.loading = payload;
         }
     },
     actions: {

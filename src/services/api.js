@@ -40,7 +40,7 @@ const api = (() => {
                         originalRequest._retry = true;
 
                         const token = await refreshToken(axiosInstance);
-                        LocalStorageService.setAccessToken(token);
+                        if (token) LocalStorageService.setAccessToken(token);
 
                         originalRequest.headers['Authorization'] = `Bearer ${token}`;
 

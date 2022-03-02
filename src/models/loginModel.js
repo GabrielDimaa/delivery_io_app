@@ -1,16 +1,16 @@
 export default class LoginModel {
     constructor(
-        usuario,
-        senha
+        email,
+        password
     ) {
-        this.usuario = usuario;
-        this.senha = senha;
+        this.email = email;
+        this.password = password;
     }
 
     toJson() {
         return {
-            "usuario": this.usuario,
-            "senha": this.senha
+            "email": this.email,
+            "password": this.password
         };
     }
 }
