@@ -29,7 +29,7 @@ export default new Vuex.Store({
             if (payload) {
                 setTimeout(() => {
                     state.showNotification = false;
-                }, 5000);
+                }, 8000);
             }
         },
         SET_IS_LOGGED(state, payload) {

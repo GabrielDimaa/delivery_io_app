@@ -1,7 +1,13 @@
 <template>
-    <a href="#" @click.prevent="hideNotification" v-ripple v-if="showNotification" id="notification-bottom">
-        <v-icon :size="22" color="white" class="mr-2">mdi-bell-outline</v-icon>
-        Você recebeu um novo pedido
+    <a href="" @click.prevent="toPedidos" v-ripple v-if="showNotification" id="notification-bottom">
+        <v-snackbar :timeout="8000" color="var(--primary-color)" v-model="showNotification" >
+            Você recebeu um novo pedido
+            <template v-slot:action="{ attrs }">
+                <v-btn color="transparent" elevation="0" @click="hideNotification" v-bind="attrs">
+                    <v-icon color="var(--background-color)">mdi-close</v-icon>
+                </v-btn>
+            </template>
+        </v-snackbar>
     </a>
 </template>
 
@@ -15,10 +21,13 @@ export default {
     },
     methods: {
         ...mapActions(['setShowNotification']),
-        hideNotification() {
+        toPedidos() {
             if (this.$router.currentRoute.name !== "Pedidos")
-                this.$router.replace("/pedidos");
+                this.$router.replace("/admin/pedidos");
 
+            this.hideNotification();
+        },
+        hideNotification() {
             this.setShowNotification(false);
         }
     }
@@ -27,18 +36,6 @@ export default {
 
 <style scoped>
 #notification-bottom {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: fixed;
-    bottom: 0;
-    right: 0;
-    left: 0;
-    width: 100%;
-    height: 45px;
-    background: var(--primary-color);
-    color: var(--background-color);
-    font-weight: 600;
     text-decoration: none;
 }
 </style>
