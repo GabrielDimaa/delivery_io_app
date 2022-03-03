@@ -47,7 +47,6 @@ export default {
     },
     methods: {
         ...mapActions('login', ['setLoading', 'resetFields']),
-        ...mapActions(['setIsLogged']),
         async fazerLogin() {
             try {
                 this.setLoading(true);
@@ -63,7 +62,6 @@ export default {
 
                     LocalStorageService.setAccessToken(response.data.access_token);
                     this.resetFields();
-                    this.setIsLogged(true);
 
                     await this.$router.replace("/admin/pedidos");
                 }

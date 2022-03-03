@@ -73,16 +73,7 @@ router.beforeEach((to, from, next) => {
     if (to.meta.requiresAuth) {
         const token = LocalStorageService.getAccessToken();
 
-        if (token) {
-            if (store.state.isLogged) {
-                next()
-            } else {
-                LocalStorageService.clearAccessToken();
-                next({path: "/admin/login"})
-            }
-        } else {
-            next({path: "*"});
-        }
+        token ? next() : next({path: "*"});
     } else {
         next();
     }

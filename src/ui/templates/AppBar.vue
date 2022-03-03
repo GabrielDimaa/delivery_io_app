@@ -30,10 +30,9 @@ export default {
         iconSize: 20,
     }),
     methods: {
-        ...mapActions(['changeDrawer', 'setIsLogged']),
+        ...mapActions(['changeDrawer']),
         fazerLogout() {
             LocalStorageService.clearAccessToken();
-            this.setIsLogged(false);
             this.$router.replace("/admin/login");
         }
     }
