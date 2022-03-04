@@ -27,14 +27,14 @@
                                 </v-form>
                             </validation-observer>
 
-                            <div class="flex container-subcategorias">
+                            <div class="d-flex flex-column">
                                 <v-btn :disabled="loadingForm" @click.stop="openDialogSubcategoria(null)"
                                        text class="btn-add-subcategoria">
                                     <v-icon color="var(--secondary-color)" size="22" left>mdi-plus-circle</v-icon>
                                     Adicionar subcategoria
                                 </v-btn>
 
-                                <div v-for="sub in subcategorias" :key="sub.id_subcategoria" class="subcategorias">
+                                <div v-for="sub in subcategorias" :key="sub.id_subcategoria" class="d-flex">
                                     <div v-if="!sub.deleted" class="subcategoria-dialog">
                                         <a @click.prevent="openDialogSubcategoria(sub)" href="#" v-ripple class="subcategoria">
                                             {{sub.descricao}}
@@ -60,8 +60,41 @@
             <div style="height: 12px;"/>
         </div>
 
-        <ListagemCategorias v-if="!hideDataTable" :onClickUpdate="(e) => clickUpdateCategoria(e)" :onClickDelete="(e) => clickDeleteCategoria(e)" :data-table="categorias"/>
-        <span v-else>Nenhuma categoria cadastrada.</span>
+        <v-expansion-panels multiple accordion>
+            <v-expansion-panel v-for="cat in categorias" :key="cat.idCategoria">
+                <v-expansion-panel-header>
+                    <label class="categoria-item">{{cat.descricao}}</label>
+                </v-expansion-panel-header>
+
+                <v-expansion-panel-content>
+                    <div class="d-flex">
+                        <div class="flex-grow-1">
+                            <p class="subcategoria-item" v-for="sub in cat.subcategorias" :key="sub.idSubcategoria">
+                                {{ sub.descricao }}
+                            </p>
+                        </div>
+
+                        <v-tooltip bottom>
+                            <template v-slot:activator="{ on, attrs }">
+                                <v-btn icon @click="clickUpdateCategoria(cat)" v-bind="attrs" v-on="on"  class="flex-grow-0" color="var(--primary-color)">
+                                    <v-icon size="20">mdi-pencil-outline</v-icon>
+                                </v-btn>
+                            </template>
+                            <span>Editar categoria</span>
+                        </v-tooltip>
+
+                        <v-tooltip bottom>
+                            <template v-slot:activator="{ on, attrs }">
+                                <v-btn icon @click="clickDeleteCategoria(cat)" v-bind="attrs" v-on="on"  class="flex-grow-0" color="var(--error-color)">
+                                    <v-icon size="20">mdi-delete-outline</v-icon>
+                                </v-btn>
+                            </template>
+                            <span>Remover categoria</span>
+                        </v-tooltip>
+                    </div>
+                </v-expansion-panel-content>
+            </v-expansion-panel>
+        </v-expansion-panels>
 
         <LoadingDefault :loading="loading.show" :message="loading.text"/>
         <ConfirmDialog ref="confirmDialog"/>
@@ -74,7 +107,6 @@ import '@/plugins/vee';
 import {showSuccess, showError} from '../../../global';
 import {ValidationObserver, ValidationProvider} from 'vee-validate';
 import {sort} from "../../../utils/utils";
-import ListagemCategorias from '../../components/Categorias/ListagemCategorias';
 import DialogDefault from "../../components/shared/DialogDefault";
 import LoadingDefault from "../../components/shared/LoadingDefault";
 import ConfirmDialog from "../../components/shared/ConfirmDialog";
@@ -90,7 +122,6 @@ export default {
         ConfirmDialog,
         LoadingDefault,
         DialogDefault,
-        ListagemCategorias,
         ValidationProvider,
         ValidationObserver,
     },
@@ -231,15 +262,6 @@ export default {
     margin-bottom: 10px;
 }
 
-.container-subcategorias {
-    display: flex;
-    flex-direction: column;
-}
-
-.subcategorias {
-    display: flex;
-}
-
 .subcategoria-dialog {
     display: flex;
     justify-content: space-between;
@@ -270,5 +292,16 @@ export default {
     font-size: 14px;
     letter-spacing: 0;
     font-weight: 600;
+}
+
+.categoria-item {
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.subcategoria-item {
+    font-size: 14px;
+    font-weight: 400;
+    color: grey;
 }
 </style>

@@ -1,6 +1,7 @@
 import axios from "axios";
 import refreshToken from "./refreshToken";
 import LocalStorageService from "./localStorageService";
+import router from '../router/router';
 
 const _axiosDefault = axios.create({
     baseURL: process.env.VUE_APP_API_BASE_URL,
@@ -40,7 +41,11 @@ const api = (() => {
                         originalRequest._retry = true;
 
                         const token = await refreshToken(axiosInstance);
-                        if (token) LocalStorageService.setAccessToken(token);
+                        if (token) {
+                            LocalStorageService.setAccessToken(token);
+                        } else {
+                            return router.replace('/');
+                        }
 
                         originalRequest.headers['Authorization'] = `Bearer ${token}`;
 

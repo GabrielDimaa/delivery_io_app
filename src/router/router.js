@@ -1,6 +1,5 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import store from '../stores/store';
 import Admin from "../ui/views/admin/Admin";
 import Login from "../ui/views/admin/Login";
 import Home from "../ui/views/Home";
