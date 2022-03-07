@@ -78,27 +78,36 @@
         </DialogDefault>
 
         <div v-if="!produtosEmpty">
-            <v-card v-for="prod in produtos" :key="prod.idProduto" width="260" class="card-produto mt-8 pa-4"
-                    elevation="2">
-                <v-img src="@/assets/img/hamburguer.png" height="128" contain/>
+            <v-layout class="mt-8" wrap>
+                <v-flex v-for="(prod, index) in produtos" :key="prod.idProduto" xs12 md6>
+                    <v-card elevation="1" class="card-produto" :class="[(index % 2) === 0 ? 'mr-2' : 'ml-2']">
+                        <div class="d-flex">
+                            <v-img src="@/assets/img/hamburguer.png" width="128" contain position="left"/>
 
-                <h4 class="mt-4">{{ prod.descricao }}</h4>
-                <div class="preco">
-                    {{ prod.categoria.descricao }} - {{ prod.subcategoria.descricao }}
-                    <br>
-                    <span class="preco">{{ toMoney(prod.preco) }}</span>
-                </div>
+                            <div class="info-produto">
+                                <div class="flex-grow-1 d-flex flex-column justify-center">
+                                    <h4>{{ prod.descricao }}</h4>
+                                    <v-chip outlined color="var(--primary-color)" small class="chip mt-1">{{ prod.categoria.descricao }}</v-chip>
+                                    <v-chip outlined color="var(--primary-color)" small class="chip mt-1">{{ prod.subcategoria.descricao }}</v-chip>
+                                </div>
+                                <span class="preco">{{ toMoney(prod.preco) }}</span>
+                            </div>
+                        </div>
 
-                <div class="d-flex flex-row-reverse">
-                    <v-btn icon color="yellow" @click="openDialogUpdate(prod)">
-                        <v-icon size="20">mdi-pencil</v-icon>
-                    </v-btn>
+                        <div class="action-produto">
+                            <v-btn class="btn" outlined color="var(--primary-color)" @click="openDialogUpdate(prod)">
+                                <v-icon size="18" class="mr-2">mdi-pencil-outline</v-icon>
+                                Editar
+                            </v-btn>
 
-                    <v-btn icon color="red" @click="remove(prod)">
-                        <v-icon size="20">mdi-delete</v-icon>
-                    </v-btn>
-                </div>
-            </v-card>
+                            <v-btn class="btn" outlined color="var(--error-color)" @click="remove(prod)">
+                                <v-icon size="18" class="mr-2">mdi-delete-outline</v-icon>
+                                Excluir
+                            </v-btn>
+                        </div>
+                    </v-card>
+                </v-flex>
+            </v-layout>
         </div>
         <NenhumDadoEncontrado v-else text="Nenhum produto encontrado."/>
 
@@ -293,16 +302,54 @@ export default {
 #produtos .btn {
     color: white;
     text-transform: none;
-    font-weight: 400;
+    font-weight: 500;
     letter-spacing: 1px;
 }
 
 #produtos .card-produto {
-    border-radius: 12px;
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+}
+
+.card-produto .info-produto {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-left: 14px;
+}
+
+.info-produto > h4 {
+    font-weight: 500;
+}
+
+.info-produto .chip {
+    justify-content: center;
+}
+
+.card-produto .action-produto {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    margin-left: 20px;
 }
 
 .card-produto .preco {
-    color: var(--grey-color);
-    font-size: 14px;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+@media only screen and (max-width: 500px) {
+    #produtos .card-produto {
+        flex-wrap: wrap;
+    }
+
+    .card-produto .action-produto {
+        display: flex;
+        width: 100%;
+        flex-direction: row;
+        justify-content: space-evenly;
+        margin: 18px 0 0 0;
+    }
 }
 </style>
