@@ -60,9 +60,9 @@
             <div style="height: 12px;"/>
         </div>
 
-        <v-expansion-panels multiple accordion>
+        <v-expansion-panels :value="[0]" multiple accordion>
             <v-expansion-panel v-for="cat in categorias" :key="cat.idCategoria">
-                <v-expansion-panel-header>
+                <v-expansion-panel-header ripple>
                     <label class="categoria-item">{{cat.descricao}}</label>
                 </v-expansion-panel-header>
 
