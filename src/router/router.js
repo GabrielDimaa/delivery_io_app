@@ -10,6 +10,7 @@ import Produtos from "../ui/views/admin/Produtos";
 import Categorias from "../ui/views/admin/Categorias";
 import TaxasEntrega from "../ui/views/admin/TaxasEntrega";
 import LocalStorageService from "../services/localStorageService";
+import {getPayloadJWT} from "../utils/utils";
 
 Vue.use(Router);
 
@@ -72,7 +73,20 @@ router.beforeEach((to, from, next) => {
     if (to.meta.requiresAuth) {
         const token = LocalStorageService.getAccessToken();
 
-        token ? next() : next({path: "*"});
+        if (token != null) {
+            const tokenDecode = getPayloadJWT(token);
+
+            if (!tokenDecode ||
+                tokenDecode.name !== process.env.VUE_APP_NAME ||
+                tokenDecode.email !== process.env.VUE_APP_EMAIL ||
+                tokenDecode.key_payload !== process.env.VUE_APP_KEY_PAYLOAD) {
+                next({path: "*"})
+            } else {
+                next()
+            }
+        } else {
+            next({path: "*"});
+        }
     } else {
         next();
     }
