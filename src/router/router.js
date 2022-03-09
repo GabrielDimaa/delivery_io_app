@@ -8,6 +8,7 @@ import Dashboard from "../ui/views/admin/Dashboard";
 import Pedidos from "../ui/views/admin/Pedidos";
 import Produtos from "../ui/views/admin/Produtos";
 import Categorias from "../ui/views/admin/Categorias";
+import Complementos from "../ui/views/admin/Complementos";
 import TaxasEntrega from "../ui/views/admin/TaxasEntrega";
 import LocalStorageService from "../services/localStorageService";
 import {getPayloadJWT} from "../utils/utils";
@@ -57,6 +58,12 @@ const router = new Router({
                     path: "/admin/categorias",
                     name: "Categorias",
                     component: Categorias,
+                    meta: {requiresAuth: true}
+                },
+                {
+                    path: "/admin/complementos",
+                    name: "Complementos",
+                    component: Complementos,
                     meta: {requiresAuth: true}
                 },
                 {

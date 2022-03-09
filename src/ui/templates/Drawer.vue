@@ -33,9 +33,9 @@ export default {
             itensMenu: [
                 {text: "Dashboard", icon: "mdi-view-dashboard", route: "/admin/"},
                 {text: "Pedidos", icon: "mdi-room-service", route: "/admin/pedidos"},
-                {text: "Cardápio", icon: "mdi-book-open-variant", route: "/admin/cardapio"},
                 {text: "Produtos", icon: "mdi-silverware", route: "/admin/produtos"},
                 {text: "Categorias", icon: "mdi-shape", route: "/admin/categorias"},
+                {text: "Complementos", icon: "mdi-shape", route: "/admin/complementos"},
                 {text: "Taxas de entrega", icon: "mdi-moped", route: "/admin/taxas-entrega"},
             ]
         }
