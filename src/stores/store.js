@@ -3,6 +3,7 @@ import Vuex from 'vuex';
 import pedidosStore from './modules/pedidosStore';
 import produtosStore from './modules/produtosStore';
 import categoriasStore from './modules/categoriasStore';
+import complementosStore from './modules/complementosStore';
 import loginStore from './modules/loginStore';
 
 Vue.use(Vuex);
@@ -12,6 +13,7 @@ export default new Vuex.Store({
         pedidos: pedidosStore,
         produtos: produtosStore,
         categorias: categoriasStore,
+        complementos: complementosStore,
         login: loginStore
     },
     state: {
