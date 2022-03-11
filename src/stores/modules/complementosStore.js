@@ -5,7 +5,7 @@ export default {
     namespaced: true,
     state: {
         complemento: new ComplementoModel(),
-        complementos: [],
+        categoriasComplementos: [],
         categoria: new CategoriaModel(),
         categorias: [],
         loading: {
@@ -19,15 +19,15 @@ export default {
             return (state.produto?.idProduto ?? false) ? "Alterar complemento" : "Cadastrar complemento";
         },
         complementosEmpty(state) {
-            return state.complementos.length === 0;
+            return state.categoriasComplementos.length === 0;
         }
     },
     mutations: {
         SET_COMPLEMENTO(state, payload) {
             state.complemento = payload;
         },
-        SET_COMPLEMENTOS(state, payload) {
-            state.complementos = payload;
+        SET_CATEGORIAS_COMPLEMENTOS(state, payload) {
+            state.categoriasComplementos = payload;
         },
         SET_CATEGORIA(state, payload) {
             state.categoria = payload;
@@ -50,8 +50,8 @@ export default {
         setComplemento(context, payload) {
             context.commit("SET_COMPLEMENTO", payload);
         },
-        setComplementos(context, payload) {
-            context.commit("SET_COMPLEMENTOS", payload);
+        setCategoriasComplementos(context, payload) {
+            context.commit("SET_CATEGORIAS_COMPLEMENTOS", payload);
         },
         setCategoria(context, payload) {
             context.commit("SET_CATEGORIA", payload);

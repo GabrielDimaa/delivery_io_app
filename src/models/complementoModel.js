@@ -35,4 +35,14 @@ export default class ComplementoModel {
             CategoriaModel.fromJson(json.categoria)
         );
     }
+
+    clone() {
+        return new ComplementoModel(
+            this.idComplemento,
+            this.descricao,
+            this.preco,
+            this.idCategoria,
+            this.categoria
+        );
+    }
 }

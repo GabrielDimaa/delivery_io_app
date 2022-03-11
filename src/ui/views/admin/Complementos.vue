@@ -55,7 +55,39 @@
         </DialogDefault>
 
         <div v-if="!complementosEmpty">
-            lista
+            <v-card class="mt-4 pa-5" v-for="categoria in categoriasComplementos" :key="categoria.idCategoria" >
+                <h3 class="categoria-item mb-2">{{categoria.descricao}}</h3>
+
+                <div v-for="(complemento, index) in categoria.complementos" :key="complemento.idComplemento">
+                    <div class="d-flex justify-space-between align-center">
+                        <span class="complemento-item">{{ complemento.descricao }}</span>
+
+                        <div>
+                            <v-tooltip bottom>
+                                <template v-slot:activator="{ on, attrs }">
+                                    <v-btn icon @click="clickUpdateComplemento(complemento)" v-bind="attrs" v-on="on"
+                                           class="flex-grow-0" color="var(--primary-color)">
+                                        <v-icon size="20">mdi-pencil-outline</v-icon>
+                                    </v-btn>
+                                </template>
+                                <span>Editar complemento</span>
+                            </v-tooltip>
+
+                            <v-tooltip bottom>
+                                <template v-slot:activator="{ on, attrs }">
+                                    <v-btn icon @click="remove(complemento)" v-bind="attrs" v-on="on"
+                                           class="flex-grow-0" color="var(--error-color)">
+                                        <v-icon size="20">mdi-delete-outline</v-icon>
+                                    </v-btn>
+                                </template>
+                                <span>Remover complemento</span>
+                            </v-tooltip>
+                        </div>
+                    </div>
+
+                    <v-divider v-if="(index + 1) !== categoria.complementos.length" class="mt-2 mb-2"></v-divider>
+                </div>
+            </v-card>
         </div>
 
         <NenhumDadoEncontrado v-else text="Nenhum complemento encontrado."/>
@@ -73,8 +105,7 @@ import NenhumDadoEncontrado from "../../components/shared/NenhumDadoEncontrado";
 import {ValidationObserver, ValidationProvider} from "vee-validate";
 import {mapActions, mapGetters, mapState} from "vuex";
 import api from "../../../services/api";
-import ComplementoModel from "../../../models/complementoModel";
-import {extractNumber} from "../../../utils/utils";
+import {extractNumber, sort} from "../../../utils/utils";
 import {showError, showSuccess} from "../../../global";
 import CategoriaModel from "../../../models/categoriaModel";
 
@@ -98,7 +129,7 @@ export default {
         }
     }),
     computed: {
-        ...mapState('complementos', ['loading', 'loadingForm', 'complemento', 'complementos', 'categoria', 'categorias']),
+        ...mapState('complementos', ['loading', 'loadingForm', 'complemento', 'categoriasComplementos', 'categoria', 'categorias']),
         ...mapGetters('complementos', ['titleForm', 'complementosEmpty'])
     },
     methods: {
@@ -106,7 +137,7 @@ export default {
             'setLoading',
             'setLoadingForm',
             'setComplemento',
-            'setComplementos',
+            'setCategoriasComplementos',
             'setCategoria',
             'setCategorias',
             'resetFields'
@@ -139,15 +170,7 @@ export default {
                         showError("Houve um erro ao concluir a operação!");
                     }
 
-                    const complementoResponseModel = ComplementoModel.fromJson(response.data.data);
-
-                    if (this.complemento.idComplemento) {
-                        const complementosFilter = this.complementos.filter(e => e.idComplemento !== complementoResponseModel.idComplemento);
-                        complementosFilter.push(complementoResponseModel);
-                        this.setComplementos(complementosFilter);
-                    } else {
-                        this.complementos.push(complementoResponseModel)
-                    }
+                    await this.carregarComplementos();
 
                     this.$refs.dialog.setDialog(false);
                     this.resetFields();
@@ -172,7 +195,7 @@ export default {
                         showError("Houve um erro ao excluir o complemento!");
                     }
 
-                    this.setComplementos(this.complementos.filter(e => e.idComplemento !== complemento.idComplemento));
+                    await this.carregarComplementos();
                     this.resetFields();
                     showSuccess();
                 }
@@ -182,26 +205,37 @@ export default {
                 this.setLoading(false);
             }
         },
+        clickUpdateComplemento(complemento) {
+            this._resetFields();
+
+            this.setComplemento(complemento.clone());
+            this.setCategoria(this.categorias.find(it => it.idCategoria === complemento.idCategoria));
+
+            this.$refs.dialog.setDialog(true);
+        },
+        async carregarComplementos() {
+            const response = await api.get("complementos/categorias_complementos");
+
+            if (response.data.success) {
+                let categoriasComplementos = response.data.data.list;
+                categoriasComplementos = categoriasComplementos.map(it => CategoriaModel.fromJson(it));
+                this.setCategoriasComplementos(categoriasComplementos.sort(sort));
+            }
+        }
     },
     async created() {
         try {
             this._resetFields();
-            this.setLoading(true, "Buscando complementos...");
+            this.setLoading({show: true, text: "Buscando complementos..."});
 
-            const responseComplementos = await api.get("complementos");
-
-            if (responseComplementos.data.success) {
-                let complementos = responseComplementos.data.data.list;
-                complementos = complementos.map(it => ComplementoModel.fromJson(it));
-                this.setComplementos(complementos);
-            }
+            await this.carregarComplementos();
 
             const responseCategorias = await api.get("categorias");
 
             if (responseCategorias.data.success) {
                 let categorias = responseCategorias.data.data.list;
                 categorias = categorias.map(it => CategoriaModel.fromJson(it));
-                this.setCategorias(categorias);
+                this.setCategorias(categorias.sort(sort));
             }
         } finally {
             this.setLoading(false);
@@ -216,5 +250,16 @@ export default {
     text-transform: none;
     font-weight: 500;
     letter-spacing: 1px;
+}
+
+#complementos .categoria-item {
+    font-size: 16px;
+    font-weight: 500;
+}
+
+#complementos .complemento-item {
+    font-size: 14px;
+    font-weight: 400;
+    color: grey;
 }
 </style>

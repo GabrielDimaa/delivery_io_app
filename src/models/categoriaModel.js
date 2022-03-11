@@ -1,14 +1,17 @@
 import SubcategoriaModel from "./subcategoriaModel";
+import ComplementoModel from "./complementoModel";
 
 export default class CategoriaModel {
     constructor(
         idCategoria,
         descricao,
-        subcategorias
+        subcategorias,
+        complementos
     ) {
         this.idCategoria = idCategoria;
         this.descricao = descricao;
         this.subcategorias = subcategorias;
+        this.complementos = complementos;
     }
 
     toJson() {
@@ -25,7 +28,8 @@ export default class CategoriaModel {
         return new CategoriaModel(
             json.id_categoria,
             json.descricao,
-            json.subcategorias?.map(it => SubcategoriaModel.fromJson(it)) ?? []
+            json.subcategorias?.map(it => SubcategoriaModel.fromJson(it)) ?? [],
+            json.complementos?.map(it => ComplementoModel.fromJson(it)) ?? []
         );
     }
 
@@ -33,7 +37,8 @@ export default class CategoriaModel {
         return new CategoriaModel(
             this.idCategoria,
             this.descricao,
-            this.subcategorias.map(it => it.clone())
+            this.subcategorias.map(it => it.clone()),
+            this.complementos.map(it => it.clone())
         );
     }
 }
