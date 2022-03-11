@@ -37,6 +37,7 @@ export default {
         },
         RESET_FIELDS(state) {
             state.complemento = new ComplementoModel();
+            state.categoria = new CategoriaModel();
         },
         SET_LOADING(state, payload) {
             state.loading.show = (payload?.show ?? false);

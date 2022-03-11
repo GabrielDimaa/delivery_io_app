@@ -64,7 +64,7 @@ export default {
                     LocalStorageService.setAccessToken(response.data.access_token);
                     this.resetFields();
 
-                    await this.$router.replace("/admin/pedidos");
+                    await this.$router.replace("/admin/");
                 }
             } catch (err) {
                 showError(err);

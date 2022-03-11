@@ -129,8 +129,16 @@ export default {
         }
     }),
     computed: {
-        ...mapState('complementos', ['loading', 'loadingForm', 'complemento', 'categoriasComplementos', 'categoria', 'categorias']),
-        ...mapGetters('complementos', ['titleForm', 'complementosEmpty'])
+        ...mapState('complementos', ['loading', 'loadingForm', 'complemento', 'categoriasComplementos', 'categorias']),
+        ...mapGetters('complementos', ['titleForm', 'complementosEmpty']),
+        categoria: {
+            get() {
+                return this.$store.state.complementos.categoria;
+            },
+            set(value) {
+                this.$store.commit("complementos/SET_CATEGORIA", value);
+            }
+        }
     },
     methods: {
         ...mapActions('complementos', [
@@ -162,6 +170,7 @@ export default {
                     const postPut = this.complemento.idComplemento ? 'put' : 'post';
                     const id = this.complemento.idComplemento ? `/${this.complemento.idComplemento}` : "";
 
+                    this.complemento.idCategoria = this.categoria.idCategoria;
                     const data = this.complemento.toJson();
 
                     const response = await api[postPut](`complementos${id}`, data);
