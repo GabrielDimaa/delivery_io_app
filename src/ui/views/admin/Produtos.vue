@@ -88,7 +88,7 @@
         <div v-if="!filteredListEmpty">
             <v-layout wrap>
                 <v-flex v-for="(prod, index) in filteredList" :key="prod.idProduto" xs12 md6>
-                    <v-card elevation="1" class="card-produto" :class="[(index % 2) === 0 ? 'mr-2' : 'ml-2']">
+                    <v-card elevation="1" class="card-produto mb-4" :class="[(index % 2) === 0 ? 'mr-2' : 'ml-2']">
                         <div class="d-flex">
                             <v-img src="@/assets/img/hamburguer.png" width="128" contain position="left"/>
 
