@@ -1,85 +1,93 @@
 <template>
     <v-container id="produtos" fluid class="ma-0 pa-0">
-        <DialogDefault ref="dialog" text-btn-confirm="Salvar" :title="titleForm"
-                       :loading="loadingForm" :click-confirm="save">
-            <template v-slot:activator="{on, attrs}">
-                <v-btn class="btn" color="var(--primary-color)" @click="_resetFields" v-on="on" :attrs="attrs">
-                    Cadastrar
-                </v-btn>
-            </template>
+        <div class="d-flex justify-space-between">
+            <SearchField/>
 
-            <template v-slot:body>
-                <v-card-text class="mt-8">
-                    <v-container class="pa-0 ma-0">
-                        <validation-observer ref="formProdutos">
-                            <v-form @submit.prevent="save">
-                                <v-container class="pa-0 ma-0">
-                                    <v-row>
-                                        <v-col cols="12" sm="6" md="9" class="pb-0">
-                                            <validation-provider v-slot="{errors}" name="Descrição" rules="required">
-                                                <v-text-field
-                                                    v-model="produto.descricao" :disabled="loadingForm"
-                                                    :error-messages="errors" label="Descrição" outlined>
-                                                </v-text-field>
-                                            </validation-provider>
-                                        </v-col>
+            <DialogDefault ref="dialog" text-btn-confirm="Salvar" :title="titleForm"
+                           :loading="loadingForm" :click-confirm="save">
+                <template v-slot:activator="{on, attrs}">
+                    <v-btn class="btn" color="var(--primary-color)" @click="_resetFields" v-on="on" :attrs="attrs">
+                        Cadastrar
+                    </v-btn>
+                </template>
 
-                                        <v-col cols="12" sm="6" md="3" class="pb-0">
-                                            <validation-provider v-slot="{errors}" name="Preço">
-                                                <vuetify-money
-                                                    v-model="produto.preco" :disabled="loadingForm"
-                                                    :error-messages="errors" label="Preço" outlined
-                                                    :options="options" placeholder="0,00" required/>
-                                            </validation-provider>
-                                        </v-col>
-                                    </v-row>
+                <template v-slot:body>
+                    <v-card-text class="mt-8">
+                        <v-container class="pa-0 ma-0">
+                            <validation-observer ref="formProdutos">
+                                <v-form @submit.prevent="save">
+                                    <v-container class="pa-0 ma-0">
+                                        <v-row>
+                                            <v-col cols="12" sm="6" md="9" class="pb-0">
+                                                <validation-provider v-slot="{errors}" name="Descrição"
+                                                                     rules="required">
+                                                    <v-text-field
+                                                        v-model="produto.descricao" :disabled="loadingForm"
+                                                        :error-messages="errors" label="Descrição" outlined>
+                                                    </v-text-field>
+                                                </validation-provider>
+                                            </v-col>
 
-                                    <v-row>
-                                        <v-col cols="12" sm="6" md="6" class="pb-0 pt-0">
-                                            <validation-provider v-slot="{errors}" name="Categoria" rules="required">
-                                                <v-select v-model="categoria" :disabled="loadingForm"
-                                                          :items="categorias" return-object :error-messages="errors"
-                                                          label="Categoria" item-text="descricao"
-                                                          item-value="idCategoria"
-                                                          required outlined no-data-text="Nenhuma categoria">
-                                                </v-select>
-                                            </validation-provider>
-                                        </v-col>
+                                            <v-col cols="12" sm="6" md="3" class="pb-0">
+                                                <validation-provider v-slot="{errors}" name="Preço">
+                                                    <vuetify-money
+                                                        v-model="produto.preco" :disabled="loadingForm"
+                                                        :error-messages="errors" label="Preço" outlined
+                                                        :options="options" placeholder="0,00" required/>
+                                                </validation-provider>
+                                            </v-col>
+                                        </v-row>
 
-                                        <v-col cols="12" sm="6" md="6" class="pb-0 pt-0">
-                                            <validation-provider v-slot="{errors}" name="Subcategoria" rules="required">
-                                                <v-select
-                                                    v-model="subcategoria" :disabled="disableFieldSubcategoria"
-                                                    :items="subcategorias" return-object :error-messages="errors"
-                                                    label="Subcategoria" item-text="descricao"
-                                                    item-value="idSubcategoria"
-                                                    required outlined no-data-text="Nenhuma subcategoria">
-                                                </v-select>
-                                            </validation-provider>
-                                        </v-col>
-                                    </v-row>
+                                        <v-row>
+                                            <v-col cols="12" sm="6" md="6" class="pb-0 pt-0">
+                                                <validation-provider v-slot="{errors}" name="Categoria"
+                                                                     rules="required">
+                                                    <v-select v-model="categoria" :disabled="loadingForm"
+                                                              :items="categorias" return-object :error-messages="errors"
+                                                              label="Categoria" item-text="descricao"
+                                                              item-value="idCategoria"
+                                                              required outlined no-data-text="Nenhuma categoria">
+                                                    </v-select>
+                                                </validation-provider>
+                                            </v-col>
 
-                                    <v-row>
-                                        <v-col cols="12" class="pb-0 pt-0">
-                                            <validation-provider v-slot="{errors}" name="Sobre" rules="max:250">
-                                                <v-textarea
-                                                    v-model="produto.sobre" :disabled="loadingForm"
-                                                    :error-messages="errors" label="Sobre" outlined rows="3" no-resize>
-                                                </v-textarea>
-                                            </validation-provider>
-                                        </v-col>
-                                    </v-row>
-                                </v-container>
-                            </v-form>
-                        </validation-observer>
-                    </v-container>
-                </v-card-text>
-            </template>
-        </DialogDefault>
+                                            <v-col cols="12" sm="6" md="6" class="pb-0 pt-0">
+                                                <validation-provider v-slot="{errors}" name="Subcategoria"
+                                                                     rules="required">
+                                                    <v-select
+                                                        v-model="subcategoria" :disabled="disableFieldSubcategoria"
+                                                        :items="subcategorias" return-object :error-messages="errors"
+                                                        label="Subcategoria" item-text="descricao"
+                                                        item-value="idSubcategoria"
+                                                        required outlined no-data-text="Nenhuma subcategoria">
+                                                    </v-select>
+                                                </validation-provider>
+                                            </v-col>
+                                        </v-row>
 
-        <div v-if="!produtosEmpty">
-            <v-layout class="mt-8" wrap>
-                <v-flex v-for="(prod, index) in produtos" :key="prod.idProduto" xs12 md6>
+                                        <v-row>
+                                            <v-col cols="12" class="pb-0 pt-0">
+                                                <validation-provider v-slot="{errors}" name="Sobre" rules="max:250">
+                                                    <v-textarea
+                                                        v-model="produto.sobre" :disabled="loadingForm"
+                                                        :error-messages="errors" label="Sobre" outlined rows="3"
+                                                        no-resize>
+                                                    </v-textarea>
+                                                </validation-provider>
+                                            </v-col>
+                                        </v-row>
+                                    </v-container>
+                                </v-form>
+                            </validation-observer>
+                        </v-container>
+                    </v-card-text>
+                </template>
+            </DialogDefault>
+        </div>
+
+        <div v-if="!filteredListEmpty">
+            <v-layout wrap>
+                <v-flex v-for="(prod, index) in filteredList" :key="prod.idProduto" xs12 md6>
                     <v-card elevation="1" class="card-produto" :class="[(index % 2) === 0 ? 'mr-2' : 'ml-2']">
                         <div class="d-flex">
                             <v-img src="@/assets/img/hamburguer.png" width="128" contain position="left"/>
@@ -122,6 +130,7 @@ import {extractNumber, sort, toMoney} from "../../../utils/utils";
 import LoadingDefault from "../../components/shared/LoadingDefault";
 import DialogDefault from "../../components/shared/DialogDefault";
 import ConfirmDialog from "../../components/shared/ConfirmDialog";
+import SearchField from "../../components/shared/SearchField";
 import {ValidationObserver, ValidationProvider} from "vee-validate";
 import ProdutoModel from "../../../models/produtoModel";
 import CategoriaModel from "../../../models/categoriaModel";
@@ -132,6 +141,7 @@ import api from "../../../services/api";
 export default {
     name: "Produtos",
     components: {
+        SearchField,
         NenhumDadoEncontrado,
         LoadingDefault,
         DialogDefault,
@@ -149,6 +159,7 @@ export default {
         }
     }),
     computed: {
+        ...mapState(['search']),
         ...mapState('produtos', ['produto', 'produtos', 'categorias', 'loading', 'loadingForm']),
         ...mapGetters('produtos', ['subcategorias', 'titleForm', 'disableFieldSubcategoria', 'produtosEmpty']),
         categoria: {
@@ -166,6 +177,14 @@ export default {
             set(value) {
                 this.$store.commit("produtos/SET_SUBCATEGORIA", value);
             }
+        },
+        filteredList() {
+            return this.produtos.filter(it => {
+                return it.descricao.toLowerCase().includes(this.search.toLowerCase());
+            });
+        },
+        filteredListEmpty() {
+            return this.filteredList.length === 0;
         }
     },
     methods: {

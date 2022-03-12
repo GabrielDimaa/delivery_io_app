@@ -18,7 +18,8 @@ export default new Vuex.Store({
     },
     state: {
         drawer: true,
-        showNotification: false
+        showNotification: false,
+        search: ""
     },
     mutations: {
         CHANGE_DRAWER(state) {
@@ -32,6 +33,9 @@ export default new Vuex.Store({
                     state.showNotification = false;
                 }, 8000);
             }
+        },
+        SET_SEARCH(state, payload) {
+            state.search = payload;
         }
     },
     actions: {
@@ -40,6 +44,9 @@ export default new Vuex.Store({
         },
         setShowNotification(context, payload) {
             context.commit("SET_SHOW_NOTIFICATION", payload);
+        },
+        setSearch(context, payload) {
+            context.commit("SET_SEARCH", payload);
         }
     }
 })

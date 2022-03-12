@@ -1,6 +1,8 @@
 <template>
     <v-container id="categorias" fluid class="ma-0 pa-0">
-        <div class="mb-4">
+        <div class="d-flex justify-space-between">
+            <SearchField/>
+
             <DialogDefault ref="dialog" text-btn-confirm="Salvar" :title="titleForm"
                            :loading="loadingForm" :click-confirm="save">
                 <template v-slot:activator="{on, attrs}">
@@ -57,44 +59,47 @@
                     </v-card-text>
                 </template>
             </DialogDefault>
-            <div style="height: 12px;"/>
         </div>
 
-        <v-expansion-panels :value="[0]" multiple accordion>
-            <v-expansion-panel v-for="cat in categorias" :key="cat.idCategoria">
-                <v-expansion-panel-header ripple>
-                    <label class="categoria-item">{{cat.descricao}}</label>
-                </v-expansion-panel-header>
+        <v-expansion-panels v-if="!filteredListEmpty" :value="[0]" multiple accordion>
+                <v-expansion-panel v-for="cat in filteredList" :key="cat.idCategoria">
+                    <v-expansion-panel-header ripple>
+                        <label class="categoria-item">{{ cat.descricao }}</label>
+                    </v-expansion-panel-header>
 
-                <v-expansion-panel-content>
-                    <div class="d-flex">
-                        <div class="flex-grow-1">
-                            <p class="subcategoria-item" v-for="sub in cat.subcategorias" :key="sub.idSubcategoria">
-                                {{ sub.descricao }}
-                            </p>
+                    <v-expansion-panel-content>
+                        <div class="d-flex">
+                            <div class="flex-grow-1">
+                                <p class="subcategoria-item" v-for="sub in cat.subcategorias" :key="sub.idSubcategoria">
+                                    {{ sub.descricao }}
+                                </p>
+                            </div>
+
+                            <v-tooltip bottom>
+                                <template v-slot:activator="{ on, attrs }">
+                                    <v-btn icon @click="clickUpdateCategoria(cat)" v-bind="attrs" v-on="on"
+                                           class="flex-grow-0" color="var(--primary-color)">
+                                        <v-icon size="20">mdi-pencil-outline</v-icon>
+                                    </v-btn>
+                                </template>
+                                <span>Editar categoria</span>
+                            </v-tooltip>
+
+                            <v-tooltip bottom>
+                                <template v-slot:activator="{ on, attrs }">
+                                    <v-btn icon @click="clickDeleteCategoria(cat)" v-bind="attrs" v-on="on"
+                                           class="flex-grow-0" color="var(--error-color)">
+                                        <v-icon size="20">mdi-delete-outline</v-icon>
+                                    </v-btn>
+                                </template>
+                                <span>Remover categoria</span>
+                            </v-tooltip>
                         </div>
+                    </v-expansion-panel-content>
+                </v-expansion-panel>
+            </v-expansion-panels>
 
-                        <v-tooltip bottom>
-                            <template v-slot:activator="{ on, attrs }">
-                                <v-btn icon @click="clickUpdateCategoria(cat)" v-bind="attrs" v-on="on"  class="flex-grow-0" color="var(--primary-color)">
-                                    <v-icon size="20">mdi-pencil-outline</v-icon>
-                                </v-btn>
-                            </template>
-                            <span>Editar categoria</span>
-                        </v-tooltip>
-
-                        <v-tooltip bottom>
-                            <template v-slot:activator="{ on, attrs }">
-                                <v-btn icon @click="clickDeleteCategoria(cat)" v-bind="attrs" v-on="on"  class="flex-grow-0" color="var(--error-color)">
-                                    <v-icon size="20">mdi-delete-outline</v-icon>
-                                </v-btn>
-                            </template>
-                            <span>Remover categoria</span>
-                        </v-tooltip>
-                    </div>
-                </v-expansion-panel-content>
-            </v-expansion-panel>
-        </v-expansion-panels>
+        <NenhumDadoEncontrado v-else text="Nenhum categoria encontrada."/>
 
         <LoadingDefault :loading="loading.show" :message="loading.text"/>
         <ConfirmDialog ref="confirmDialog"/>
@@ -114,10 +119,14 @@ import SubcategoriaDialog from "../../components/Categorias/SubcategoriaDialog";
 import {mapActions, mapGetters, mapState} from "vuex";
 import CategoriaModel from "../../../models/categoriaModel";
 import api from "../../../services/api";
+import SearchField from "../../components/shared/SearchField";
+import NenhumDadoEncontrado from "../../components/shared/NenhumDadoEncontrado";
 
 export default {
     name: "Categorias",
     components: {
+        NenhumDadoEncontrado,
+        SearchField,
         SubcategoriaDialog,
         ConfirmDialog,
         LoadingDefault,
@@ -126,8 +135,21 @@ export default {
         ValidationObserver,
     },
     computed: {
+        ...mapState(['search']),
         ...mapState('categorias', ['categoria', 'categorias', 'subcategoria', 'subcategorias', 'loading', 'loadingForm']),
         ...mapGetters('categorias', ['titleForm', 'hideDataTable']),
+        filteredList() {
+            return this.categorias.filter(it => {
+                if (it.descricao.toLowerCase().includes(this.search.toLowerCase())) {
+                    return true;
+                }
+
+                return it.subcategorias.filter(e => e.descricao.toLowerCase().includes(this.search.toLowerCase())).length > 0;
+            });
+        },
+        filteredListEmpty() {
+            return this.filteredList.length === 0;
+        },
     },
     methods: {
         ...mapActions('categorias', [

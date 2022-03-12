@@ -1,61 +1,65 @@
 <template>
     <v-container id="complementos" fluid class="ma-0 pa-0">
-        <DialogDefault ref="dialog" text-btn-confirm="Salvar" :title="titleForm"
-                       :loading="loadingForm" :click-confirm="save">
-            <template v-slot:activator="{on, attrs}">
-                <v-btn class="btn" color="var(--primary-color)" @click="_resetFields" v-on="on" :attrs="attrs">
-                    Cadastrar
-                </v-btn>
-            </template>
+        <div class="d-flex justify-space-between">
+            <SearchField/>
 
-            <template v-slot:body>
-                <v-card-text class="mt-8">
-                    <v-container class="pa-0 ma-0">
-                        <validation-observer ref="formComplementos">
-                            <v-form @submit.prevent="save">
-                                <v-container class="pa-0 ma-0">
-                                    <v-row>
-                                        <v-col cols="12" sm="6" md="9" class="pb-0">
-                                            <validation-provider v-slot="{errors}" name="Descrição" rules="required">
-                                                <v-text-field
-                                                    v-model="complemento.descricao" :disabled="loadingForm"
-                                                    :error-messages="errors" label="Descrição" outlined>
-                                                </v-text-field>
-                                            </validation-provider>
-                                        </v-col>
+            <DialogDefault ref="dialog" text-btn-confirm="Salvar" :title="titleForm"
+                           :loading="loadingForm" :click-confirm="save">
+                <template v-slot:activator="{on, attrs}">
+                    <v-btn class="btn" color="var(--primary-color)" @click="_resetFields" v-on="on" :attrs="attrs">
+                        Cadastrar
+                    </v-btn>
+                </template>
 
-                                        <v-col cols="12" sm="6" md="3" class="pb-0">
-                                            <validation-provider v-slot="{errors}" name="Preço">
-                                                <vuetify-money
-                                                    v-model="complemento.preco" :disabled="loadingForm"
-                                                    :error-messages="errors" label="Preço" outlined
-                                                    :options="options" placeholder="0,00" required/>
-                                            </validation-provider>
-                                        </v-col>
-                                    </v-row>
+                <template v-slot:body>
+                    <v-card-text class="mt-8">
+                        <v-container class="pa-0 ma-0">
+                            <validation-observer ref="formComplementos">
+                                <v-form @submit.prevent="save">
+                                    <v-container class="pa-0 ma-0">
+                                        <v-row>
+                                            <v-col cols="12" sm="6" md="9" class="pb-0">
+                                                <validation-provider v-slot="{errors}" name="Descrição" rules="required">
+                                                    <v-text-field
+                                                        v-model="complemento.descricao" :disabled="loadingForm"
+                                                        :error-messages="errors" label="Descrição" outlined>
+                                                    </v-text-field>
+                                                </validation-provider>
+                                            </v-col>
 
-                                    <v-row>
-                                        <v-col cols="12" class="pb-0 pt-0">
-                                            <validation-provider v-slot="{errors}" name="Categoria" rules="required">
-                                                <v-select v-model="categoria" :disabled="loadingForm"
-                                                          :items="categorias" return-object :error-messages="errors"
-                                                          label="Categoria" item-text="descricao"
-                                                          item-value="idCategoria"
-                                                          required outlined no-data-text="Nenhuma categoria">
-                                                </v-select>
-                                            </validation-provider>
-                                        </v-col>
-                                    </v-row>
-                                </v-container>
-                            </v-form>
-                        </validation-observer>
-                    </v-container>
-                </v-card-text>
-            </template>
-        </DialogDefault>
+                                            <v-col cols="12" sm="6" md="3" class="pb-0">
+                                                <validation-provider v-slot="{errors}" name="Preço">
+                                                    <vuetify-money
+                                                        v-model="complemento.preco" :disabled="loadingForm"
+                                                        :error-messages="errors" label="Preço" outlined
+                                                        :options="options" placeholder="0,00" required/>
+                                                </validation-provider>
+                                            </v-col>
+                                        </v-row>
 
-        <div v-if="!complementosEmpty">
-            <v-card class="mt-4 pa-5" v-for="categoria in categoriasComplementos" :key="categoria.idCategoria" >
+                                        <v-row>
+                                            <v-col cols="12" class="pb-0 pt-0">
+                                                <validation-provider v-slot="{errors}" name="Categoria" rules="required">
+                                                    <v-select v-model="categoria" :disabled="loadingForm"
+                                                              :items="categorias" return-object :error-messages="errors"
+                                                              label="Categoria" item-text="descricao"
+                                                              item-value="idCategoria"
+                                                              required outlined no-data-text="Nenhuma categoria">
+                                                    </v-select>
+                                                </validation-provider>
+                                            </v-col>
+                                        </v-row>
+                                    </v-container>
+                                </v-form>
+                            </validation-observer>
+                        </v-container>
+                    </v-card-text>
+                </template>
+            </DialogDefault>
+        </div>
+
+        <div v-if="!filteredListEmpty">
+            <v-card class="pa-5 mb-4" v-for="categoria in filteredList" :key="categoria.descricao" >
                 <h3 class="categoria-item mb-2">{{categoria.descricao}}</h3>
 
                 <div v-for="(complemento, index) in categoria.complementos" :key="complemento.idComplemento">
@@ -108,10 +112,12 @@ import api from "../../../services/api";
 import {extractNumber, sort} from "../../../utils/utils";
 import {showError, showSuccess} from "../../../global";
 import CategoriaModel from "../../../models/categoriaModel";
+import SearchField from "../../components/shared/SearchField";
 
 export default {
     name: "Complementos",
     components: {
+        SearchField,
         DialogDefault,
         ConfirmDialog,
         NenhumDadoEncontrado,
@@ -129,6 +135,7 @@ export default {
         }
     }),
     computed: {
+        ...mapState(['search']),
         ...mapState('complementos', ['loading', 'loadingForm', 'complemento', 'categoriasComplementos', 'categorias']),
         ...mapGetters('complementos', ['titleForm', 'complementosEmpty']),
         categoria: {
@@ -138,7 +145,26 @@ export default {
             set(value) {
                 this.$store.commit("complementos/SET_CATEGORIA", value);
             }
-        }
+        },
+        filteredList() {
+            const filterList = [];
+
+            this.categoriasComplementos.map(it => {
+                const complementosList = it.complementos.filter(e => e.descricao.toLowerCase().includes(this.search.toLowerCase()));
+
+                if (complementosList.length > 0) {
+                    it = it.clone();
+                    it.complementos = complementosList;
+
+                    filterList.push(it);
+                }
+            });
+
+            return filterList;
+        },
+        filteredListEmpty() {
+            return this.filteredList.length === 0;
+        },
     },
     methods: {
         ...mapActions('complementos', [

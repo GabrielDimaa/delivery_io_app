@@ -35,7 +35,7 @@ export default {
                 {text: "Pedidos", icon: "mdi-room-service", route: "/admin/pedidos"},
                 {text: "Produtos", icon: "mdi-silverware", route: "/admin/produtos"},
                 {text: "Categorias", icon: "mdi-shape", route: "/admin/categorias"},
-                {text: "Complementos", icon: "mdi-shape", route: "/admin/complementos"},
+                {text: "Complementos", icon: "mdi-plus-circle-multiple", route: "/admin/complementos"},
                 {text: "Taxas de entrega", icon: "mdi-moped", route: "/admin/taxas-entrega"},
             ]
         }
