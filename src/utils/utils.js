@@ -1,3 +1,5 @@
+import StatusPedido from "../enums/statusPedido";
+
 function extractNumber(value) {
     return value.replaceAll(".", "").replaceAll(",", ".");
 }
@@ -24,13 +26,6 @@ function formatterPhone(phone) {
     return phone;
 }
 
-function convertTZ(date) {
-    if (!date) return null;
-
-    if (typeof date === "string") date = new Date(date);
-    return new Date(date.toLocaleString("en-US", {timeZone: "America/Sao_Paulo"}));
-}
-
 function getPayloadJWT(token) {
     try {
         const base64Url = token.split('.')[1];
@@ -45,4 +40,22 @@ function getPayloadJWT(token) {
     }
 }
 
-export {extractNumber, sort, toMoney, formatterPhone, convertTZ, getPayloadJWT}
+function getColorStatus(status) {
+    switch (status) {
+        case StatusPedido.Cancelado:
+            return {dark: "rgba(219, 22, 47)", light: "rgba(219, 22, 47, 0.2)"};
+        case StatusPedido.Aceito:
+            return {dark: "rgba(10, 129, 209)", light: "rgba(10, 129, 209, 0.2)"};
+        case StatusPedido.EmRotaDeEntrega:
+            return {dark: "rgba(234, 115, 23)", light: "rgba(234, 115, 23, 0.2)"};
+        case StatusPedido.ProntoParaRetirada:
+            return {dark: "rgb(211, 0, 255)", light: "rgba(211, 0, 255, 0.2)"};
+        case StatusPedido.Finalizado:
+            return {dark: "rgb(19,213,90)", light: "rgba(50, 232, 117, 0.2)"};
+        case StatusPedido.EmAberto:
+        default:
+            return {dark: "rgb(46, 196, 182)", light: "rgba(46, 196, 182, 0.2)"};
+    }
+}
+
+export {extractNumber, sort, toMoney, formatterPhone, getPayloadJWT, getColorStatus}
