@@ -16,6 +16,7 @@
 
 <script>
 import StatusPedido from "../../../enums/statusPedido";
+import {getColorStatus} from "../../../utils/utils";
 
 export default {
     name: "TileStatusPedido",
@@ -31,21 +32,7 @@ export default {
     },
     computed: {
         getColor() {
-            switch (this.status) {
-                case StatusPedido.Cancelado:
-                    return {dark: "rgba(219, 22, 47)", light: "rgba(219, 22, 47, 0.2)"};
-                case StatusPedido.Aceito:
-                    return {dark: "rgba(10, 129, 209)", light: "rgba(10, 129, 209, 0.2)"};
-                case StatusPedido.EmRotaDeEntrega:
-                    return {dark: "rgba(234, 115, 23)", light: "rgba(234, 115, 23, 0.2)"};
-                case StatusPedido.ProntoParaRetirada:
-                    return {dark: "rgb(211, 0, 255)", light: "rgba(211, 0, 255, 0.2)"};
-                case StatusPedido.Finalizado:
-                    return {dark: "rgb(19,213,90)", light: "rgba(50, 232, 117, 0.2)"};
-                case StatusPedido.EmAberto:
-                default:
-                    return {dark: "rgb(46, 196, 182)", light: "rgba(46, 196, 182, 0.2)"};
-            }
+            return getColorStatus(this.status);
         }
     }
 }

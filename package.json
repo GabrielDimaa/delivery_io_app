@@ -8,12 +8,14 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "apexcharts": "^3.33.2",
     "axios": "^0.25.0",
     "core-js": "^3.6.5",
     "es6-promise": "^4.2.8",
     "v-mask": "^2.3.0",
     "vee-validate": "^3.4.14",
     "vue": "^2.6.11",
+    "vue-apexcharts": "^1.6.2",
     "vue-echo": "^1.0.2",
     "vue-echo-laravel": "^0.1.0",
     "vue-router": "^3.5.3",
