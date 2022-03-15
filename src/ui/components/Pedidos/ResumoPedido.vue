@@ -66,11 +66,11 @@
 import TileResumoPedido from "./TileResumoPedido";
 import TipoEntrega from "../../../enums/tipoEntrega";
 import {mapActions, mapGetters, mapState} from "vuex";
-import {convertTZ, formatterPhone, toMoney} from "../../../utils/utils";
 import {showError} from "../../../global";
 import StatusPedido from "../../../enums/statusPedido";
 import TileStatusPedido from "./TileStatusPedido";
 import api from "../../../services/api";
+import {formatterPhone, toMoney} from "../../../utils/utils";
 
 export default {
     name: "ResumoPedido",
@@ -126,7 +126,7 @@ export default {
                 }
 
                 pedido.status = StatusPedido.fromIndex(response.data.data.status);
-                pedido.canceladoAt = convertTZ(response.data.data.cancelado_at);
+                pedido.canceladoAt = response.data.data.cancelado_at;
             } catch (err) {
                 showError(err);
             } finally {

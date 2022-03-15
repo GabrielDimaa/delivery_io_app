@@ -1,6 +1,5 @@
 import CategoriaModel from "./categoriaModel";
 import SubcategoriaModel from "./subcategoriaModel";
-import {convertTZ} from "../utils/utils";
 
 export default class ProdutoModel {
     constructor(
@@ -50,7 +49,7 @@ export default class ProdutoModel {
             json.preco,
             json.sobre,
             json.ativo,
-            convertTZ(json.created_at),
+            json.created_at ? new Date(json.created_at) : null,
             CategoriaModel.fromJson(json.categoria),
             SubcategoriaModel.fromJson(json.subcategoria)
         );

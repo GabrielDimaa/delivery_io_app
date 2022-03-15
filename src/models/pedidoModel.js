@@ -1,7 +1,6 @@
 import PedidoItemModel from "./pedidoItemModel";
 import StatusPedido from "../enums/statusPedido";
 import TipoEntrega from "../enums/tipoEntrega";
-import {convertTZ} from "../utils/utils";
 
 export default class PedidoModel {
     constructor(
@@ -101,9 +100,9 @@ export default class PedidoModel {
             TipoEntrega.fromIndex(json.tipo_entrega),
             StatusPedido.fromIndex(json.status),
             json.observacao,
-            convertTZ(json.created_at),
-            convertTZ(json.finalizado_at),
-            convertTZ(json.cancelado_at),
+            json.created_at ? new Date(json.created_at) : null,
+            json.finalizado_at ? new Date(json.finalizado_at) : null,
+            json.cancelado_at ? new Date(json.cancelado_at): null,
             json.tempo_estimado,
             json.itens?.map(it => PedidoItemModel.fromJson(it)) ?? []
         );

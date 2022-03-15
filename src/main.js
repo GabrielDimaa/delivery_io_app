@@ -7,6 +7,7 @@ import './plugins/toasted.js';
 import './plugins/vuemask.js';
 import './plugins/vuetify-money.js';
 import 'es6-promise/auto.js';
+import './prototypes/date.js';
 import Echo from 'laravel-echo';
 
 Vue.config.productionTip = false;
