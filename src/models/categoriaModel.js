@@ -37,8 +37,8 @@ export default class CategoriaModel {
         return new CategoriaModel(
             this.idCategoria,
             this.descricao,
-            this.subcategorias.map(it => it.clone()),
-            this.complementos.map(it => it.clone())
+            this.subcategorias?.map(it => it.clone()) ?? [],
+            this.complementos?.map(it => it.clone()) ?? []
         );
     }
 }

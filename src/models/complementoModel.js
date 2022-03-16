@@ -42,7 +42,7 @@ export default class ComplementoModel {
             this.descricao,
             this.preco,
             this.idCategoria,
-            this.categoria
+            this.categoria?.clone()
         );
     }
 }

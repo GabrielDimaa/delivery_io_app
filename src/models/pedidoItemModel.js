@@ -62,7 +62,7 @@ export default class PedidoItemModel {
             this.valorTotal,
             this.quantidade,
             this.descricaoSubcategoria,
-            this.produto
+            this.produto?.clone()
         );
     }
 }

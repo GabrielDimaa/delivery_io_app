@@ -130,7 +130,7 @@ export default class PedidoModel {
             this.finalizadoAt,
             this.canceladoAt,
             this.tempoEstimado,
-            this.itens
+            this.itens?.map(it => it.clone()) ?? []
         );
     }
 }

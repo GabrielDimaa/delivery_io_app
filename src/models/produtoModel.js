@@ -65,8 +65,8 @@ export default class ProdutoModel {
             this.sobre,
             this.ativo,
             this.createdAt,
-            this.categoria,
-            this.subcategoria
+            this.categoria?.clone(),
+            this.subcategoria?.clone()
         );
     }
 }
