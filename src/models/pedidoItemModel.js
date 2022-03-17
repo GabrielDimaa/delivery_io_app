@@ -1,4 +1,5 @@
 import ProdutoModel from "./produtoModel";
+import PedidoComplementoItemModel from "./pedidoComplementoItemModel";
 
 export default class PedidoItemModel {
     constructor(
@@ -11,6 +12,7 @@ export default class PedidoItemModel {
         quantidade,
         descricaoSubcategoria,
         produto,
+        complementos
     ) {
         this.idPedidoItem = idPedidoItem;
         this.idPedido = idPedido;
@@ -21,6 +23,12 @@ export default class PedidoItemModel {
         this.quantidade = quantidade;
         this.descricaoSubcategoria = descricaoSubcategoria;
         this.produto = produto;
+        this.complementos = complementos;
+    }
+
+    get complementosDisplay() {
+        const complementosDescricao = this.complementos.map(it => it.descricao);
+        return complementosDescricao.join(", ");
     }
 
     toJson() {
@@ -32,7 +40,8 @@ export default class PedidoItemModel {
             "valor_unitario": this.valorUnitario,
             "valor_total": this.valorTotal,
             "quantidade": this.quantidade,
-            "descricao_subcategoria": this.descricaoSubcategoria
+            "descricao_subcategoria": this.descricaoSubcategoria,
+            "complemento_itens": this.complementos?.map(it => it.json()) ?? []
         }
     }
 
@@ -48,7 +57,8 @@ export default class PedidoItemModel {
             json.valor_total,
             json.quantidade,
             json.descricao_subcategoria,
-            ProdutoModel.fromJson(json.produto)
+            ProdutoModel.fromJson(json.produto),
+            json.complemento_itens?.map(it => PedidoComplementoItemModel.fromJson(it)) ?? []
         );
     }
 
@@ -62,7 +72,8 @@ export default class PedidoItemModel {
             this.valorTotal,
             this.quantidade,
             this.descricaoSubcategoria,
-            this.produto?.clone()
+            this.produto?.clone(),
+            this.complementos?.map(it => it.clone()) ?? []
         );
     }
 }

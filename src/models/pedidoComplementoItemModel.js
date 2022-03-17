@@ -1,4 +1,4 @@
-import ProdutoModel from "./produtoModel";
+import ComplementoModel from "./complementoModel";
 
 export default class PedidoComplementoItemModel {
     constructor(

@@ -43,6 +43,8 @@
                                 <div class="preco-unitario-produto">{{ qtdValorUnitarioItemDisplay(item) }}</div>
                                 <div class="valor-total-produto">{{ toMoney(item.valorTotal) }}</div>
                             </div>
+
+                            <div class="complementos">{{ item.complementosDisplay }}</div>
                         </v-list-item-content>
                     </v-list-item>
                 </template>
@@ -178,6 +180,12 @@ export default {
     flex-grow: 1;
     font-size: 14px;
     font-weight: 500;
+}
+
+.list-itens .complementos {
+    margin-top: 4px;
+    font-size: 12px;
+    font-weight: 400;
 }
 
 .list-itens .list-item-content .preco-unitario-produto {
