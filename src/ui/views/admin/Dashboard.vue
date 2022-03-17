@@ -1,11 +1,11 @@
 <template>
     <v-container id="dashboard" fluid class="ma-0 pa-0">
         <v-row>
-            <CardsPedidosDashboard :value="totalPedidos" :text="'Total de pedidos'" :icon="'mdi-chart-timeline-variant-shimmer'"
+            <CardsPedidosDashboard :value="totalPedidos.toString()" :text="'Total de pedidos'" :icon="'mdi-chart-timeline-variant-shimmer'"
                                    :background="totalPedidosColors.light" :loading="loading" :color="totalPedidosColors.dark"/>
-            <CardsPedidosDashboard :value="emAberto" :text="'Em aberto'" :icon="'mdi-clipboard-clock-outline'"
+            <CardsPedidosDashboard :value="emAberto.toString()" :text="'Em aberto'" :icon="'mdi-clipboard-clock-outline'"
                                    :background="emAbertoColors.light" :loading="loading" :color="emAbertoColors.dark"/>
-            <CardsPedidosDashboard :value="finalizados" :text="'Finalizados'" :icon="'mdi-checkbox-multiple-marked-circle-outline'"
+            <CardsPedidosDashboard :value="finalizados.toString()" :text="'Finalizados'" :icon="'mdi-checkbox-multiple-marked-circle-outline'"
                                    :background="finalizadosColors.light" :loading="loading" :color="finalizadosColors.dark"/>
         </v-row>
 
