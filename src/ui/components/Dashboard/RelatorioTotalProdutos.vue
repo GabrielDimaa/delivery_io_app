@@ -17,7 +17,7 @@
 
 <script>
 import VueApexCharts from 'vue-apexcharts';
-import api from "../../../services/api";
+import {api} from "../../../services/api";
 
 export default {
     name: "RelatorioTotalProdutos",

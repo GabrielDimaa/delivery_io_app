@@ -24,7 +24,7 @@ import LoadingDefault from "../../components/shared/LoadingDefault";
 import {mapActions, mapGetters, mapState} from "vuex";
 import PedidoModel from "../../../models/pedidoModel";
 import NenhumDadoEncontrado from "../../components/shared/NenhumDadoEncontrado";
-import api from "../../../services/api";
+import {api} from "../../../services/api";
 
 export default {
     name: "Pedidos",

@@ -27,7 +27,7 @@ import StatusPedido from "../../../enums/statusPedido";
 import CardsPedidosDashboard from "../../components/Dashboard/CardsPedidosDashboard";
 import RelatorioValorTotal from "../../components/Dashboard/RelatorioValorTotal";
 import RelatorioTotalProdutos from "../../components/Dashboard/RelatorioTotalProdutos";
-import api from "../../../services/api";
+import {api} from "../../../services/api";
 
 export default {
     name: "Dashboard",

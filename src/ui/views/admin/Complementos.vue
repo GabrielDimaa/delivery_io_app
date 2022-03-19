@@ -108,7 +108,7 @@ import LoadingDefault from "../../components/shared/LoadingDefault";
 import NenhumDadoEncontrado from "../../components/shared/NenhumDadoEncontrado";
 import {ValidationObserver, ValidationProvider} from "vee-validate";
 import {mapActions, mapGetters, mapState} from "vuex";
-import api from "../../../services/api";
+import {api} from "../../../services/api";
 import {extractNumber, sort} from "../../../utils/utils";
 import {showError, showSuccess} from "../../../global";
 import CategoriaModel from "../../../models/categoriaModel";

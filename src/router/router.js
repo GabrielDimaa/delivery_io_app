@@ -1,9 +1,10 @@
 import Vue from 'vue';
 import Router from 'vue-router';
+import NotFound from "../ui/views/NotFound";
+import Home from "../ui/views/Home";
+import AcompanhePedido from "../ui/views/AcompanhePedido";
 import Admin from "../ui/views/admin/Admin";
 import Login from "../ui/views/admin/Login";
-import Home from "../ui/views/Home";
-import NotFound from "../ui/views/NotFound";
 import Dashboard from "../ui/views/admin/Dashboard";
 import Pedidos from "../ui/views/admin/Pedidos";
 import Produtos from "../ui/views/admin/Produtos";
@@ -28,6 +29,11 @@ const router = new Router({
             component: Home,
         },
         {
+            path: "/pedido/:id",
+            name: "AcompanhePedido",
+            component: AcompanhePedido,
+        },
+        {
             path: "/admin/login",
             name: "Login",
             component: Login,
@@ -40,7 +46,7 @@ const router = new Router({
                     path: "/",
                     name: "Dashboard",
                     component: Dashboard,
-                    // meta: {requiresAuth: true}
+                    meta: {requiresAuth: true}
                 },
                 {
                     path: "/admin/pedidos",

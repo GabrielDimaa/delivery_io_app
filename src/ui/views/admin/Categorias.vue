@@ -118,7 +118,7 @@ import ConfirmDialog from "../../components/shared/ConfirmDialog";
 import SubcategoriaDialog from "../../components/Categorias/SubcategoriaDialog";
 import {mapActions, mapGetters, mapState} from "vuex";
 import CategoriaModel from "../../../models/categoriaModel";
-import api from "../../../services/api";
+import {api} from "../../../services/api";
 import SearchField from "../../components/shared/SearchField";
 import NenhumDadoEncontrado from "../../components/shared/NenhumDadoEncontrado";
 

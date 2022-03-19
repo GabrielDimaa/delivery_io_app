@@ -71,7 +71,7 @@ import {mapActions, mapGetters, mapState} from "vuex";
 import {showError} from "../../../global";
 import StatusPedido from "../../../enums/statusPedido";
 import TileStatusPedido from "./TileStatusPedido";
-import api from "../../../services/api";
+import {api} from "../../../services/api";
 import {formatterPhone, toMoney} from "../../../utils/utils";
 
 export default {

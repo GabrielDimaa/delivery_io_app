@@ -1,6 +1,7 @@
 import PedidoItemModel from "./pedidoItemModel";
 import StatusPedido from "../enums/statusPedido";
 import TipoEntrega from "../enums/tipoEntrega";
+import PedidoStatusModel from "./pedidoStatusModel";
 
 export default class PedidoModel {
     constructor(
@@ -24,7 +25,9 @@ export default class PedidoModel {
         finalizadoAt,
         canceladoAt,
         tempoEstimado,
-        itens
+        avaliacao,
+        itens,
+        historicoStatus
     ) {
         this.idPedido = idPedido;
         this.codigoPedido = codigoPedido;
@@ -46,7 +49,9 @@ export default class PedidoModel {
         this.finalizadoAt = finalizadoAt;
         this.canceladoAt = canceladoAt;
         this.tempoEstimado = tempoEstimado;
+        this.avaliacao = avaliacao;
         this.itens = itens;
+        this.historicoStatus = historicoStatus;
     }
 
     get horarioPedidoDisplay() {
@@ -76,6 +81,7 @@ export default class PedidoModel {
             "status": this.status.value,
             "observacao": this.observacao,
             "tempo_estimado": this.tempoEstimado,
+            "avaliacao": this.avaliacao,
             "itens": this.itens?.map(it => it.toJson()) ?? []
         };
     }
@@ -104,7 +110,9 @@ export default class PedidoModel {
             json.finalizado_at ? new Date(json.finalizado_at) : null,
             json.cancelado_at ? new Date(json.cancelado_at): null,
             json.tempo_estimado,
-            json.itens?.map(it => PedidoItemModel.fromJson(it)) ?? []
+            json.avaliacao,
+            json.itens?.map(it => PedidoItemModel.fromJson(it)) ?? [],
+            json.historico_status?.map(it => PedidoStatusModel.fromJson(it)) ?? []
         );
     }
 
@@ -130,7 +138,9 @@ export default class PedidoModel {
             this.finalizadoAt,
             this.canceladoAt,
             this.tempoEstimado,
-            this.itens?.map(it => it.clone()) ?? []
+            this.avaliacao,
+            this.itens?.map(it => it.clone()) ?? [],
+            this.historicoStatus
         );
     }
 }

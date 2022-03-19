@@ -3,16 +3,16 @@ import refreshToken from "./refreshToken";
 import LocalStorageService from "./localStorageService";
 import router from '../router/router';
 
-const _axiosDefault = axios.create({
+const axiosCreate = {
     baseURL: process.env.VUE_APP_API_BASE_URL,
     headers: {
         "Content-Type": "application/json",
         "secret": process.env.VUE_APP_API_SECRET
     }
-});
+};
 
 const api = (() => {
-    const axiosInstance = _axiosDefault;
+    const axiosInstance = axios.create(axiosCreate);
 
     axiosInstance.interceptors.request.use(
         config => {
@@ -66,6 +66,10 @@ const api = (() => {
     );
 
     return axiosInstance;
-}) ()
+}) ();
 
-export default api;
+const apiWithoutAuthentication = (() => {
+    return axios.create(axiosCreate);
+}) ();
+
+export {api, apiWithoutAuthentication};

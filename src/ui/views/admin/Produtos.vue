@@ -136,7 +136,7 @@ import ProdutoModel from "../../../models/produtoModel";
 import CategoriaModel from "../../../models/categoriaModel";
 import {mapActions, mapGetters, mapState} from "vuex";
 import NenhumDadoEncontrado from "../../components/shared/NenhumDadoEncontrado";
-import api from "../../../services/api";
+import {api} from "../../../services/api";
 
 export default {
     name: "Produtos",

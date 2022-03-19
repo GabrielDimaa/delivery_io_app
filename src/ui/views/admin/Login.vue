@@ -36,7 +36,7 @@
 import {ValidationObserver, ValidationProvider} from "vee-validate";
 import {mapActions, mapState} from "vuex";
 import {showError} from "../../../global";
-import api from "../../../services/api";
+import {api} from "../../../services/api";
 import LocalStorageService from "../../../services/localStorageService";
 import localStorageService from "../../../services/localStorageService";
 

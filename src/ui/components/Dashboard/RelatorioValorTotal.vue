@@ -31,7 +31,7 @@
 
 <script>
 import VueApexCharts from 'vue-apexcharts';
-import api from "../../../services/api";
+import {api} from "../../../services/api";
 import StatusPedido from "../../../enums/statusPedido";
 import PedidoModel from "../../../models/pedidoModel";
 import {toMoney} from "../../../utils/utils";
