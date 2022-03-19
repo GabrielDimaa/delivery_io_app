@@ -118,6 +118,13 @@ export default {
         },
         showIcon(status, index) {
             return (index + 1) < this.historicoStatus.length || status.status.value === StatusPedido.Finalizado.value || status.status.value === StatusPedido.Cancelado.value;
+        },
+        handleListen(pedido) {
+            pedido.historicoStatus.forEach(status => {
+                if (!this.historicoStatus.some(it => it.idPedidoStatus === status.idPedidoStatus)) {
+                    this.historicoStatus.push(status);
+                }
+            });
         }
     },
     async mounted() {
@@ -136,6 +143,14 @@ export default {
                     this.rating = avaliacao;
                     this.avaliado = true;
                 }
+
+                window.Echo.channel(`acompanhar_pedido.${this.pedido.idPedido}`)
+                    .listen('.AcompanharPedido', (event) => {
+                        if (event?.pedido) {
+                            const pedidoModel = PedidoModel.fromJson(event?.pedido);
+                            if (pedidoModel?.status) this.handleListen(pedidoModel);
+                        }
+                    });
             }
         } finally {
             this.loading = false;
@@ -147,7 +162,7 @@ export default {
 <style scoped>
 /* style para remover linha no final do circle */
 .end::before {
-    height: calc(100% - 28px)
+    height: calc(100% - 60px)
 }
 
 .divider > .v-divider {

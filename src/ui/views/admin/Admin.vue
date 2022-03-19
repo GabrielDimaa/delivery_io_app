@@ -15,12 +15,15 @@ import AppBar from "../../templates/AppBar";
 import Drawer from "../../templates/Drawer";
 import Content from "../../templates/Content";
 import Notification from "../../components/shared/Notification";
-import {mapActions} from "vuex";
+import {mapActions, mapState} from "vuex";
 import PedidoModel from "../../../models/pedidoModel";
 
 export default {
     name: "Admin",
     components: {Content, Drawer, AppBar, Notification},
+    computed: {
+        ...mapState('pedidos', ['pedidos'])
+    },
     methods: {
         ...mapActions(["setShowNotification"]),
         handleListen(event) {
