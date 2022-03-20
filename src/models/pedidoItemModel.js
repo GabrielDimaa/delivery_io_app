@@ -1,5 +1,6 @@
 import ProdutoModel from "./produtoModel";
 import PedidoComplementoItemModel from "./pedidoComplementoItemModel";
+import {toMoney} from "../utils/utils";
 
 export default class PedidoItemModel {
     constructor(
@@ -27,8 +28,8 @@ export default class PedidoItemModel {
     }
 
     get complementosDisplay() {
-        const complementosDescricao = this.complementos.map(it => it.descricao);
-        return complementosDescricao.join(", ");
+        const complementosDescricao = this.complementos.map(it => `${it.quantidade}UN ${it.descricao} ${toMoney(it.valorTotal, true)}`);
+        return complementosDescricao.join(" | ");
     }
 
     toJson() {

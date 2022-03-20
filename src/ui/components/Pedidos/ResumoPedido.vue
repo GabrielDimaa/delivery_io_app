@@ -186,6 +186,7 @@ export default {
     margin-top: 4px;
     font-size: 12px;
     font-weight: 400;
+    color: var(--grey-color);
 }
 
 .list-itens .list-item-content .preco-unitario-produto {
